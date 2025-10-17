@@ -158,6 +158,17 @@
   </style>
 </head>
 <body>
+<div id="cmdk" aria-hidden="true" style="position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);z-index:99999">
+  <div style="width:min(760px,92vw);background:#0b1522;border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:0 30px 120px rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <input id="cmdk-input" placeholder="Search projects, sections, pages…" 
+        style="flex:1;padding:10px 12px;border:0;outline:none;background:transparent;color:#eaf2ff;font-size:16px">
+      <span style="opacity:.6;font-size:12px">Esc</span>
+    </div>
+    <div id="cmdk-results" style="max-height:52vh;overflow:auto;padding:6px 8px"></div>
+  </div>
+</div>
+
   <div class="in-progress">Page in progress</div>
   
   <!-- Hero Section with Interactive Neural Network -->
@@ -480,5 +491,86 @@
     const y = document.getElementById('year');
     if (y) y.textContent = new Date().getFullYear();
   </script>
+  <script>
+  const PALETTE_DATA = [
+  {t:"Go to • Software", k:"software systems", href:"#software"},
+  {t:"Go to • Quantum", k:"quantum qiskit", href:"#quantum"},
+  {t:"Go to • Data Science", k:"data analytics", href:"#datascience"},
+  {t:"Go to • AI", k:"ai ml", href:"#ai"},
+  {t:"Go to • My Story", k:"story peru background", href:"#story"},
+  {t:"Open • Resume.pdf", k:"resume cv", href:"/resume.pdf", ext:true},
+  {t:"GitHub • yanastaciocubas", k:"github", href:"https://github.com/yanastaciocubas", ext:true},
+  {t:"Project • Quantum Whalesong", k:"quantum whalesong audio sonification", href:"#spotlight"},
+];
+
+const overlay = document.getElementById('cmdk');
+const input = document.getElementById('cmdk-input');
+const list = document.getElementById('cmdk-results');
+
+function openPalette(){
+  overlay.style.display='grid';
+  overlay.ariaHidden='false';
+  input.value='';
+  render('');
+  input.focus();
+}
+function closePalette(){
+  overlay.style.display='none';
+  overlay.ariaHidden='true';
+}
+function score(q,item){
+  q=q.toLowerCase().trim(); if(!q) return 1;
+  const hay=(item.t+" "+(item.k||"")).toLowerCase();
+  let i=0,s=0;
+  for(const ch of q){
+    const j=hay.indexOf(ch,i);
+    if(j<0)return 0;
+    s+=1-(j-i>5?0.2:0);
+    i=j+1;
+  }
+  return s/q.length+(hay.includes(q)?0.5:0);
+}
+function render(q){
+  const ranked=PALETTE_DATA.map(d=>({d,s:score(q,d)}))
+    .filter(x=>x.s>0)
+    .sort((a,b)=>b.s-a.s)
+    .slice(0,12);
+  list.innerHTML=ranked.map(x=>`
+    <button data-href="${x.d.href}" data-ext="${!!x.d.ext}"
+      style="width:100%;text-align:left;background:#0b1522;
+             border:1px solid rgba(255,255,255,.06);
+             border-radius:10px;padding:12px 14px;margin:6px 4px;
+             cursor:pointer;color:#eaf2ff">
+      ${x.d.t}
+    </button>`).join('') || `<div style="opacity:.6;padding:16px">No matches.</div>`;
+  list.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const href=b.dataset.href;
+      const ext=b.dataset.ext==='true';
+      closePalette();
+      if(ext) window.open(href,'_blank');
+      else document.querySelector(href)?.scrollIntoView({behavior:'smooth'});
+    });
+  });
+}
+window.addEventListener('keydown',e=>{
+  const mac=navigator.platform.toUpperCase().includes('MAC');
+  if((mac&&e.metaKey&&e.key.toLowerCase()==='k')||
+     (!mac&&e.ctrlKey&&e.key.toLowerCase()==='k')){
+    e.preventDefault();
+    openPalette();
+  }
+  if(e.key==='Escape'&&overlay.style.display!=='none') closePalette();
+});
+overlay.addEventListener('click',e=>{
+  if(e.target===overlay) closePalette();
+});
+input.addEventListener('input',e=>render(e.target.value));
+</script>
+
+
+
+
+
 </body>
 </html>
