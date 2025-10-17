@@ -11,7 +11,7 @@
     --accent: #ffd166;
     --qubit: #9be7ff;
     --gate: #7d5fff;
-    --llama: #f4d3c2;
+    --llama: #D9D6CA;
     --llama-accent: #e09a7b;
     --muted: #9fb3c8;
   }
@@ -203,7 +203,6 @@
 
   // init wires Y positions
   function resetCircuit(){
-    wiresCount = 5;
     wireY.length = 0;
     const step = canvas.clientHeight / (wires + 1);
     for (let i=1;i<=wires;i++) wireY.push(i * step);
@@ -637,11 +636,41 @@
 
   // end game
   function endGame(){
-    running = false;
-    showOverlay('Game Over — Score: ' + score);
-    if (score > Number(localStorage.getItem('llama_best')||0)) localStorage.setItem('llama_best', score);
-    setTimeout(()=> overlay.innerHTML = '', 2000);
-  }
+  running = false;
+
+  const bestPrev = Number(localStorage.getItem('llama_best')||0);
+  if (score > bestPrev) localStorage.setItem('llama_best', score);
+
+  // Build modal into the existing #overlay
+  overlay.innerHTML = `
+    <div style="
+      background: rgba(2,6,12,.85);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(6px);
+      color:#fff; padding:18px 16px; border-radius:12px;
+      display:flex;flex-direction:column; gap:10px; align-items:center;
+      pointer-events:auto; box-shadow:0 12px 40px rgba(0,0,0,.45);
+    ">
+      <div style="font-size:1rem;opacity:.9">Game Over</div>
+      <div style="font-weight:800;font-size:1.2rem">Score: ${score}</div>
+      <div style="font-size:.9rem;color:#cfe3ff">Best: ${localStorage.getItem('llama_best')}</div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button id="overlayRestart" style="
+          padding:8px 12px;border-radius:10px;border:0;
+          background:linear-gradient(180deg,var(--accent),#ffaf4a);
+          color:#081224;font-weight:800;cursor:pointer">Restart</button>
+        <button id="overlayClose" style="
+          padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
+          background:transparent;color:var(--muted);font-weight:700;cursor:pointer">Close</button>
+      </div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:4px">Tip: Hover near the llama to make her sprint away 🦙💨</div>
+    </div>
+  `;
+
+// wire modal buttons
+  document.getElementById('overlayRestart').onclick = () => { overlay.innerHTML = ''; restart(); };
+  document.getElementById('overlayClose').onclick = () => { overlay.innerHTML = ''; };
+}
 
   // start / reset / pause
   function startGame(){

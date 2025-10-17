@@ -4,286 +4,481 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Yonara Anastacio — Echoes & Horizons</title>
-  <meta name="description" content="Yonara Anastacio — portfolio & personal story. Quantum research, software engineering projects, and public‑facing data tools. Reproducible research and production‑ready systems." />
+  <meta name="description" content="Yonara Anastacio — portfolio & personal story. Quantum research, software engineering projects, and public-facing data tools." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Person",
-    "name":"Yonara Anastacio",
-    "url":"https://your-username.github.io",
-    "jobTitle":"Undergraduate — Computer Science & Public Health",
-    "sameAs":["https://github.com/yanastaciocubas"]
-  }
-  </script>
-
   <style>
     :root{--bg:#020617;--muted:#9aa4b2;--accent:#ffd166;--accent2:#60a5fa;--card:#07101a}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#eaf2ff;background:radial-gradient(800px 400px at 10% 0%, rgba(96,165,250,0.02), transparent),var(--bg)}
-    a{color:inherit}
-    .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 80px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--accent)}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;font-weight:800;color:#06121b;font-family:Playfair Display}
-    nav{display:flex;gap:14px}
-    nav a{color:var(--muted);text-decoration:none;font-weight:600}
-
-    /* Hero */
-    .hero{padding:56px 0}
-    .hero-grid{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
-    @media(max-width:980px){.hero-grid{grid-template-columns:1fr}}
-    h1{font-family:Playfair Display,serif;font-weight:800;font-size:clamp(32px,6vw,56px);margin:0;color:#fff}
-    .lead{margin-top:10px;color:var(--muted);font-size:16px}
-    .cta-row{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
-    .btn{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);text-decoration:none;font-weight:600}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#eaf2ff;background:var(--bg);overflow-x:hidden;scroll-behavior:smooth}
+    
+    /* Hero Section with Interactive Photo */
+    .hero-section{min-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;padding:32px 16px}
+    .hero-container{max-width:1400px;width:100%;display:flex;flex-direction:column;align-items:center;gap:48px}
+    
+    /* Interactive Photo Hub */
+    .photo-hub{position:relative;width:100%;max-width:1100px;height:700px;display:flex;align-items:center;justify-content:center}
+    
+    .photo-container{position:relative;width:280px;height:280px;z-index:10}
+    .photo-frame{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));padding:6px;cursor:pointer;transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);position:relative}
+    .photo-frame.active{animation:photoGlow 2s ease-in-out infinite}
+    
+    @keyframes photoGlow{
+      0%,100%{box-shadow:0 0 40px rgba(96,165,250,0.4),0 0 80px rgba(255,209,102,0.2)}
+      50%{box-shadow:0 0 60px rgba(96,165,250,0.6),0 0 120px rgba(255,209,102,0.4)}
+    }
+    
+    .photo-inner{width:100%;height:100%;border-radius:50%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+    .photo-inner img{width:100%;height:100%;object-fit:cover}
+    .photo-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#0f0f1e);display:flex;align-items:center;justify-content:center;font-size:90px;color:var(--accent);font-weight:800;font-family:Playfair Display}
+    
+    .click-hint{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);color:var(--accent2);font-size:15px;white-space:nowrap;font-weight:600;animation:bounce 2s ease-in-out infinite}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-10px)}}
+    
+    /* SVG Neural Network Lines */
+    .neural-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+    .neural-line{stroke:var(--accent2);stroke-width:2;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000;opacity:0}
+    .neural-line.active{animation:drawLine 0.8s ease-out forwards}
+    @keyframes drawLine{to{stroke-dashoffset:0;opacity:0.6}}
+    .pulse-dot{fill:var(--accent);opacity:0}
+    .pulse-dot.active{animation:pulse 1.5s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:0;r:4}50%{opacity:1;r:8}}
+    
+    /* Navigation Nodes */
+    .network-node{position:absolute;width:180px;padding:20px;background:rgba(7,16,26,0.98);border:2px solid rgba(96,165,250,0.3);border-radius:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);backdrop-filter:blur(20px);opacity:0;transform:scale(0.5);pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:5}
+    .network-node.active{opacity:1;transform:scale(1);pointer-events:all}
+    .network-node:hover{transform:scale(1.08) translateY(-5px);border-color:var(--accent);box-shadow:0 12px 48px rgba(96,165,250,0.5)}
+    .node-icon{font-size:36px;margin-bottom:10px;display:block;filter:drop-shadow(0 0 8px currentColor)}
+    .node-title{font-weight:700;font-size:16px;color:#fff;margin-bottom:6px}
+    .node-desc{font-size:13px;color:var(--muted);line-height:1.4}
+    
+   /* Node Positions - Hexagonal Layout */
+    .node-1{top:1%;left:50%;margin-left:-90px}
+    .node-2{top:5%;right:8%}
+    .node-3{top:40%;right:5%}
+    .node-4{bottom:10%;right:15%}
+    .node-5{bottom:10%;left:15%}
+    .node-6{top:40%;left:5%}
+    
+    
+    /* Hero Text */
+    .hero-text{text-align:center;max-width:800px;z-index:10}
+    .hero-text h1{font-family:Playfair Display,serif;font-weight:800;font-size:clamp(42px,6vw,72px);color:#fff;margin-bottom:12px;line-height:1.1;background:linear-gradient(135deg,#fff,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-text .subtitle{color:var(--accent);font-size:22px;font-weight:600;margin-bottom:8px}
+    .hero-text .affiliation{color:var(--muted);font-size:18px;margin-bottom:24px}
+    .hero-text p{color:var(--muted);font-size:16px;line-height:1.7;margin:0 auto}
+    .quick-links{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+    
+    /* Button Styles */
+    .btn{padding:12px 24px;border-radius:10px;background:transparent;border:2px solid rgba(255,255,255,0.1);color:var(--muted);text-decoration:none;font-weight:600;transition:all 0.3s ease;display:inline-block;cursor:pointer}
+    .btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#04111a;border:0}
+    
+    /* --- Compact layout adjustments --- */
+    .content-section{min-height:auto;padding:48px 24px;position:relative;z-index:2}
+    .section-container{max-width:1200px;margin:0 auto}
+    .section-title{font-family:Playfair Display,serif;font-size:clamp(32px,4.5vw,48px);color:#fff;margin-bottom:20px;text-align:center}
+    
+    /* Spotlight Section */
+    .spotlight-card{background:linear-gradient(135deg,rgba(96,165,250,0.05),rgba(255,209,102,0.05));border:2px solid rgba(96,165,250,0.2);border-radius:20px;padding:28px;max-width:900px;margin:0 auto;transition:transform 0.3s ease}
+    .spotlight-card:hover{transform:translateY(-5px)}
+    .spotlight-title{font-family:Playfair Display;font-size:36px;color:var(--accent);margin-bottom:16px}
+    .spotlight-desc{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:24px}
+    .spotlight-metrics{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+    .metric{background:rgba(255,255,255,0.03);padding:16px;border-radius:12px;min-width:120px}
+    .metric-value{font-size:32px;font-weight:700;color:var(--accent2)}
+    .metric-label{font-size:13px;color:var(--muted);margin-top:4px}
+    .btn-group{display:flex;gap:12px;flex-wrap:wrap}
+    
+    /* Projects Grid (compact) */
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:16px}
+    .project-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:28px;transition:all 0.3s ease;height:100%}
+    .project-card:hover{transform:translateY(-8px);border-color:var(--accent2);box-shadow:0 12px 40px rgba(96,165,250,0.2)}
+    .project-tag{display:inline-block;padding:6px 12px;background:rgba(96,165,250,0.1);color:var(--accent2);border-radius:20px;font-size:12px;font-weight:600;margin-bottom:12px}
+    .project-title{font-size:24px;font-weight:700;color:#fff;margin-bottom:12px}
+    .project-desc{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px}
+    
+    /* Visual Portfolio (compact) */
+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:16px}
+    .portfolio-item{position:relative;height:280px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1a1a2e,#0f0f1e);cursor:pointer;transition:transform 0.3s ease}
+    .portfolio-item:hover{transform:scale(1.05)}
+    .portfolio-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease;padding:20px;text-align:center}
+    .portfolio-item:hover .portfolio-overlay{opacity:1}
+    .portfolio-text{font-weight:700;color:var(--accent);font-size:18px}
+    
+    /* My Story */
+    .story-container{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+    @media(max-width:980px){.story-container{grid-template-columns:1fr}}
+    .story-text{color:var(--muted);font-size:16px;line-height:1.8}
+    .story-text p{margin-bottom:16px}
+    .facts-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.05);padding:32px;border-radius:16px}
+    .fact-item{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .fact-item:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+    .fact-label{color:var(--accent);font-weight:600;margin-bottom:4px}
+    .fact-value{color:var(--muted)}
+    
+    /* Timeline */
+    .timeline{max-width:800px;margin:40px auto;padding-left:40px;border-left:2px solid rgba(96,165,250,0.2)}
+    .timeline-item{margin-bottom:40px;position:relative}
+    .timeline-item::before{content:'';position:absolute;width:16px;height:16px;background:var(--accent);border-radius:50%;left:-49px;top:4px;box-shadow:0 0 20px rgba(255,209,102,0.5)}
+    .timeline-year{color:var(--accent);font-weight:700;font-size:24px;margin-bottom:8px}
+    .timeline-content{color:var(--muted);line-height:1.7}
+    
+    /* Game Section */
+    .game-section{text-align:center;padding:48px 24px;background:rgba(0,0,0,0.25)}
+    .game-title{font-family:Playfair Display;font-size:42px;color:#fff;margin-bottom:16px}
+    .game-desc{color:var(--muted);margin-bottom:24px}
+    
+    /* Footer */
+    footer{text-align:center;padding:40px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.05)}
+    
+    /* "Page in progress" badge (must NOT be inside a media query) */
+    .in-progress{
+      position:fixed;top:14px;right:14px;z-index:9999;padding:6px 10px;
+      font-size:12px;font-weight:700;letter-spacing:.2px;color:#04111a;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.35);opacity:.95;user-select:none;
+    }
 
-    /* Feature */
-    .feature{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.04);padding:18px;border-radius:12px}
-    .metrics{display:flex;gap:12px;margin-top:12px}
-    .metric{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;min-width:78px;text-align:center}
-
-    /* Projects */
-    .projects{margin-top:34px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:600px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,0.03);padding:16px;border-radius:12px;display:flex;flex-direction:column;gap:10px}
-    .kicker{font-size:12px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
-    .stack{font-size:13px;color:var(--muted)}
-
-    /* Portfolio gallery with image placeholders */
-    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-    @media(max-width:980px){.gallery{grid-template-columns:repeat(2,1fr)}}
-    .tile{position:relative;border-radius:10px;overflow:hidden;background:#08121a;height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
-    .tile img{width:100%;height:100%;object-fit:cover;display:block}
-
-    /* Story */
-    .story{margin-top:34px;display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start}
-    @media(max-width:980px){.story{grid-template-columns:1fr}}
-    .bio p{color:var(--muted);line-height:1.6}
-
-    /* Modal */
-    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:100}
-    .modal{background:#07121a;border-radius:12px;padding:18px;max-width:820px;width:94%;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-    .close{background:transparent;border:0;color:var(--muted);font-weight:700}
-    pre{background:#06121a;padding:12px;border-radius:8px;overflow:auto;color:#bfeaff}
-
-    footer{margin-top:42px;color:var(--muted);font-size:14px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.02)}
+    /* Mobile layout tweaks */
+    @media(max-width:768px){
+      .photo-hub{height:600px;padding:40px 0}
+      .network-node{width:150px;padding:16px;font-size:13px}
+      .node-icon{font-size:28px}
+      .node-1,.node-2,.node-3,.node-4,.node-5,.node-6{position:absolute}
+      .node-1{top:0;left:50%;margin-left:-75px}
+      .node-2{top:20%;right:5%}
+      .node-3{top:45%;right:0}
+      .node-4{bottom:15%;right:5%}
+      .node-5{bottom:15%;left:5%}
+      .node-6{top:45%;left:0}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <a class="brand" href="#">
-        <div class="logo">YA</div>
-        <div>
-          <div style="font-weight:700">Yonara Anastacio</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:2px">CS & Public Health · AI</div>
-        </div>
-      </a>
-
-      <nav>
-        <a href="#featured">Featured</a>
-        <a href="#projects">Projects</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#story">My story</a>
-        <a href="/resume.pdf">Resume</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div class="hero-grid">
-          <div>
-            <h1> Yonara's Little world</h1>
-            <p class="lead">I build signal‑to‑product pipelines: from simulation and sound synthesis in quantum experiments to scalable engineering systems with tests, CI, and strong UX. Below you'll find a deep quantum spotlight, three SWE projects, a visual portfolio, and my personal story.</p>
-
-            <div class="cta-row">
-              <a class="btn primary" href="#featured">Deep quantum spotlight</a>
-              <a class="btn" href="mailto:yonara.anastacio@columbia.edu">Contact</a>
-              <a class="btn" href="https://github.com/yanastaciocubas" target="_blank">GitHub</a>
-            </div>
-
-            <div class="projects" id="projects">
-              <h2 style="margin-top:28px;color:#fff;font-family:Playfair Display">Selected SWE projects</h2>
-              <div class="grid">
-                <article class="card" data-project="swe1">
-                  <div class="kicker">Systems · Tooling</div>
-                  <h3>Quantum- Xpose</h3>
-                  <p class="stack">Swift · Combine · macOS</p>
-                  <p style="color:var(--muted);font-size:14px;"> Includes unit tests, property tests, and CI for stability.</p>
-                  <div style="margin-top:auto;display:flex;gap:8px">
-                    <button class="btn" data-open="swe1">Details</button>
-                    <a class="btn" href="https://github.com/yanastaciocubas/wpmtracker" target="_blank">Repo</a>
-                  </div>
-                </article>
-
-                <article class="card" data-project="swe2">
-                  <div class="kicker">Full‑stack · ML Ops</div>
-                  <h3>P2</h3>
-                  <p class="stack">React · FastAPI · Docker · Postgres</p>
-                  <p style="color:var(--muted);font-size:14px">A dashboard aggregating applicant signals; reproducible ETL, model eval tests, and deployment via Docker + GitHub Actions.</p>
-                  <div style="margin-top:auto;display:flex;gap:8px">
-                    <button class="btn" data-open="swe2">Details</button>
-                    <a class="btn" href="#">Live</a>
-                  </div>
-                </article>
-
-                <article class="card" data-project="swe3">
-                  <div class="kicker">Infra · Reliability</div>
-                  <h3>P3</h3>
-                  <p class="stack">GitHub Actions · pytest · nbconvert</p>
-                  <p style="color:var(--muted);font-size:14px"> D.</p>
-                  <div style="margin-top:auto;display:flex;gap:8px">
-                    <button class="btn" data-open="swe3">Details</button>
-                    <a class="btn" href="https://github.com/yanastaciocubas/q-notebook-ci" target="_blank">Repo</a>
-                  </div>
-                </article>
-              </div>
+  <div class="in-progress">Page in progress</div>
+  
+  <!-- Hero Section with Interactive Neural Network -->
+  <section class="hero-section">
+    <div class="hero-container">
+      
+      <!-- Interactive Photo Hub -->
+      <div class="photo-hub" id="photoHub">
+        <!-- SVG Neural Network -->
+        <svg class="neural-svg" id="neuralSvg">
+          <line class="neural-line" id="line1" x1="50%" y1="50%" x2="50%" y2="5%"/>
+          <line class="neural-line" id="line2" x1="50%" y1="50%" x2="85%" y2="25%"/>
+          <line class="neural-line" id="line3" x1="50%" y1="50%" x2="90%" y2="55%"/>
+          <line class="neural-line" id="line4" x1="50%" y1="50%" x2="75%" y2="85%"/>
+          <line class="neural-line" id="line5" x1="50%" y1="50%" x2="25%" y2="85%"/>
+          <line class="neural-line" id="line6" x1="50%" y1="50%" x2="10%" y2="55%"/>
+          
+          <circle class="pulse-dot" id="dot1" cx="50%" cy="5%" r="6"/>
+          <circle class="pulse-dot" id="dot2" cx="85%" cy="25%" r="6"/>
+          <circle class="pulse-dot" id="dot3" cx="90%" cy="55%" r="6"/>
+          <circle class="pulse-dot" id="dot4" cx="75%" cy="85%" r="6"/>
+          <circle class="pulse-dot" id="dot5" cx="25%" cy="85%" r="6"/>
+          <circle class="pulse-dot" id="dot6" cx="10%" cy="55%" r="6"/>
+        </svg>
+        
+        <div class="photo-container" id="photoTrigger">
+          <div class="photo-frame" id="photoFrame">
+            <div class="photo-inner">
+              <!-- Replace with: <img src="your-photo.jpg" alt="Yonara Anastacio"> -->
+              <div class="photo-placeholder">YA</div>
             </div>
           </div>
-
-          <aside>
-            <section id="featured" class="feature">
-              <h2>Quantum Whalesong (Spotlight)</h2>
-              <div class="meta">Quantum simulation → deterministic sonification → reproducible notebooks</div>
-              <p style="margin-top:10px;color:var(--muted);font-size:14px">A pipeline mapping quantum amplitudes to MIDI events, validated against simulated distributions, shipped with tests & CI. Designed for reviewers and engineers to reproduce results reliably.</p>
-
-              <div class="metrics">
-                <div class="metric"><strong></strong><span style="font-size:12px;color:var(--muted)"></span></div>
-                <div class="metric"><strong></strong><span style="font-size:12px;color:var(--muted)"></span></div>
-                <div class="metric"><strong>3</strong><span style="font-size:12px;color:var(--muted)">modules</span></div>
-              </div>
-
-              <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-                <a class="btn" href="https://github.com/yanastaciocubas/quantum-whalesong" target="_blank">View repo</a>
-                <a class="btn" href="#" id="openWhale">Notes</a>
-              </div>
-
-              <div style="margin-top:12px;color:var(--muted);font-size:13px">Key engineering details:</div>
-              <ul style="color:var(--muted);font-size:13px;margin-top:6px">
-                <li>Unit-tested signal pipeline (feature extraction, quantization)</li>
-                <li>Deterministic seeds + CI-hosted simulator matrix</li>
-                <li>CLI, Python API, and binary artifacts (WAV/MIDI)</li>
-              </ul>
-            </section>
-
-            <section style="margin-top:18px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:12px;border-radius:10px">
-              <div style="font-weight:700">Skills & tools</div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-                <span style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;color:var(--muted)">Python</span>
-                <span style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;color:var(--muted)">Qiskit</span>
-                <span style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;color:var(--muted)">GitHub Actions</span>
-                <span style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;color:var(--muted)">Docker</span>
-              </div>
-            </section>
-          </aside>
+          <div class="click-hint" id="clickHint">Click to activate inspired neural network!</div>
         </div>
-      </section>
-
-      <section id="portfolio" style="margin-top:44px">
-        <h2 style="font-family:Playfair Display">Visual portfolio</h2>
-        <p style="color:var(--muted);margin-top:6px">Illustrations.</p>
-
-        <div class="gallery">
-          <div class="tile" data-open="art1">Quantum Whalesong — poster</div>
-          <div class="tile" data-open="art2">WPMTracker — UI</div>
-          <div class="tile" data-open="art3">DigitalSmog — dashboard</div>
-          <div class="tile" data-open="art4">Research diagram</div>
+        
+        <!-- Neural Network Navigation Nodes -->
+        <div class="network-node node-1" data-target="software">
+          <div class="node-icon">💻</div>
+          <div class="node-title">Software Engineering</div>
+          <div class="node-desc">Production systems & tooling</div>
         </div>
-      </section>
-
-      <section id="story" class="story">
-        <div class="bio">
-          <h2 style="font-family:Playfair Display">My story</h2>
-          <p>I’m Yonara Anastacio, a first‑generation student from Lima, Peru, studying Computer Science and Public Health at Columbia University. I grew up in a fishing village, and now build creative projects that tries to bridge the gap between rigorous computation and real human needs.</p>
-          <p style="margin-top:8px">My work sits at the intersection of research and engineering: I  care deeply about accessible interfaces so others can reuse scientific work. I teach and mentor students from underrepresented backgrounds and believe technology should be understandable and useful.</p>
-          <p style="margin-top:8px">When I’m not debugging simulation seeds or writing tests, I compose music inspired by quantum systems, explore data visualizations, and draw (often on Procreate)bringing ideas from sketch to deployed product.</p>
+        
+        <div class="network-node node-2" data-target="quantum">
+          <div class="node-icon">⚛️</div>
+          <div class="node-title">Quantum Projects</div>
+          <div class="node-desc">Simulation & sonification</div>
         </div>
-
-        <aside>
-          <div class="feature">
-            <h3 style="margin:0">Quick facts</h3>
-            <div style="color:var(--muted);margin-top:8px">Columbia University • CS & Public Health</div>
-            <div style="margin-top:10px;color:var(--muted);font-size:13px"> John Jay Scholar. Passionate about AI and technology.</div>
-            <div style="margin-top:12px;display:flex;gap:8px"><a class="btn" href="/resume.pdf">Resume</a><a class="btn" href="mailto:yonara.anastacio@columbia.edu">Email</a></div>
-          </div>
-        </aside>
-      </section>
-
-      <section id="timeline" style="margin-top:44px">
-        <h2 style="font-family:Playfair Display">Timeline & selected work</h2>
-        <div style="margin-top:12px;color:var(--muted)">
-          <strong>2025</strong> — Quantum Music composer · scalable ETL, Airflow, tests<br>
-          <strong>2025</strong> — Quantum Whalesong (sonification) · reproducible notebooks & CI<br>
-          <strong>2025</strong> — Quantum Xpose 
-n        </div>
-      </section>
-
-      <!-- Modal (shared) -->
-      <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
-        <div class="modal" role="document">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
-            <div>
-              <div id="modalKicker" style="font-size:12px;color:var(--muted)"></div>
-              <h3 id="modalTitle" style="margin:6px 0 0"></h3>
-            </div>
-            <div>
-              <button class="close" id="modalClose">✕</button>
-            </div>
-          </div>
-
-          <div id="modalBody" style="color:var(--muted);font-size:14px"></div>
-          <div style="margin-top:12px"><pre id="modalCode"># sample commands</pre></div>
+        
+        <div class="network-node node-3" data-target="datascience">
+          <div class="node-icon">📊</div>
+          <div class="node-title">Data Science</div>
+          <div class="node-desc">Analytics & visualization</div>
+        </div>
+        
+        <div class="network-node node-4" data-target="ai">
+          <div class="node-icon">🤖</div>
+          <div class="node-title">AI Projects</div>
+          <div class="node-desc">ML models & pipelines</div>
+        </div>
+        
+        <div class="network-node node-5" data-target="spotlight">
+          <div class="node-icon">✨</div>
+          <div class="node-title">Science Spotlights</div>
+          <div class="node-desc">Featured research</div>
+        </div>
+        
+        <div class="network-node node-6" data-target="story">
+          <div class="node-icon">📖</div>
+          <div class="node-title">My Story</div>
+          <div class="node-desc">Journey & background</div>
         </div>
       </div>
-<!-- Inserting little game here-->
-<section id="star-wars-game" style="margin-top:4rem; text-align:center;">
-  <h2> Mini Game</h2>
-  <p>Take a break from looking around and enjoy this tiny adventure!</p>
+      
+      <!-- Hero Text -->
+      <div class="hero-text">
+        <div class="subtitle">Yonara Anastacio</div>
+        <h1> Little's World</h1>
+        <div class="affiliation">Computer Science & Public Health · Columbia University</div>
+        <p>Building signal-to-product pipelines from quantum simulations to scalable engineering systems. Bridging rigorous computation with real human needs through accessible interfaces and reproducible research.</p>
+        
+        <div class="quick-links">
+          <a class="btn primary" href="mailto:yonara.anastacio@columbia.edu">Get in Touch</a>
+          <a class="btn" href="https://github.com/yanastaciocubas" target="_blank">GitHub</a>
+          <a class="btn" href="/resume.pdf">Resume</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Quantum Whalesong Spotlight -->
+  <section class="content-section" id="spotlight" style="background:radial-gradient(circle at 50% 0%,rgba(96,165,250,0.03),transparent)">
+    <div class="section-container">
+      <h2 class="section-title">Project Spotlight</h2>
+      <div class="spotlight-card">
+        <div class="spotlight-title">Quantum Whalesong</div>
+        <div class="spotlight-desc">
+          Mapping quantum amplitudes to MIDI events, validated against simulated distributions and shipped with comprehensive tests & CI. This project demonstrates how quantum computation can create beautiful, deterministic sonification while maintaining engineering rigor and reproducibility for both researchers and engineers.
+        </div>
+        <div class="btn-group">
+          <a class="btn primary" href="https://github.com/yanastaciocubas/quantum-whalesong" target="_blank">View Repository</a>
+          <a class="btn" href="#">Technical Docs</a>
+          <a class="btn" href="#">Listen to Samples</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Software Engineering Projects -->
+  <section class="content-section" id="software">
+    <div class="section-container">
+      <h2 class="section-title">💻 Software Engineering</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-tag">Systems · Tooling</div>
+          <div class="project-title">Quantum-Xpose</div>
+          <div class="project-desc">Description.</div>
+          <div class="btn-group">
+            <a class="btn" href="https://github.com/yanastaciocubas/wpmtracker" target="_blank">View Repo</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-tag">Full-stack · ML Ops</div>
+          <div class="project-title">Admissions Dashboard</div>
+          <div class="project-desc">Description.</div>
+          <div class="btn-group">
+            <a class="btn" href="#">View Project</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-tag">Infra · Reliability</div>
+          <div class="project-title">Experiment CI</div>
+          <div class="project-desc">Description</div>
+          <div class="btn-group">
+            <a class="btn" href="https://github.com/yanastaciocubas/q-notebook-ci" target="_blank">View Repo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Quantum Projects -->
+  <section class="content-section" id="quantum" style="background:rgba(0,0,0,0.2)">
+    <div class="section-container">
+      <h2 class="section-title">⚛️ Quantum Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-tag">Research · Sonification</div>
+          <div class="project-title">Quantum Whalesong</div>
+          <div class="project-desc">Deterministic sonification of quantum states with full CI/CD pipeline and reproducible notebooks.</div>
+          <div class="btn-group">
+            <a class="btn primary" href="#spotlight">View Spotlight</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-tag">Simulation · Qiskit</div>
+          <div class="project-title">Quantum Amplitude Mapping</div>
+          <div class="project-desc">Custom simulator for extracting and visualizing quantum amplitudes with statistical validation.</div>
+          <div class="btn-group">
+            <a class="btn" href="#">Explore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Data Science Projects -->
+  <section class="content-section" id="datascience">
+    <div class="section-container">
+      <h2 class="section-title">📊 Data Science</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-tag">Analytics · Visualization</div>
+          <div class="project-title">Public Health ...</div>
+          <div class="project-desc">Description.</div>
+          <div class="btn-group">
+            <a class="btn" href="#">View Demo</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-tag">ETL · Pipeline</div>
+          <div class="project-title">Data Processing Framework</div>
+          <div class="project-desc">Description.</div>
+          <div class="btn-group">
+            <a class="btn" href="#">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- AI Projects -->
+  <section class="content-section" id="ai" style="background:rgba(0,0,0,0.2)">
+    <div class="section-container">
+      <h2 class="section-title">🤖 AI Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-tag">ML · Computer Vision</div>
+          <div class="project-title">Visual Recognition System</div>
+          <div class="project-desc">Description</div>
+          <div class="btn-group">
+            <a class="btn" href="#">Explore</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-tag">NLP · Research</div>
+          <div class="project-title">Text Analysis Pipeline</div>
+          <div class="project-desc">Description.</div>
+          <div class="btn-group">
+            <a class="btn" href="#">View Project</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Visual Portfolio -->
+  <section class="content-section">
+    <div class="section-container">
+      <h2 class="section-title"> Visual Portfolio</h2>
+      <p style="text-align:center;color:var(--muted);margin-bottom:20px">Illustrations and designs from projects</p>
+      <div class="portfolio-grid">
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Quantum Whalesong<br/>Poster Design</div></div>
+        </div>
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Project<br/>UI Mockups</div></div>
+        </div>
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Dashboard<br/>Visualizations</div></div>
+        </div>
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Research<br/>Diagrams</div></div>
+        </div>
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Neural Network<br/>Architecture</div></div>
+        </div>
+        <div class="portfolio-item">
+          <div class="portfolio-overlay"><div class="portfolio-text">Data Flow<br/>Illustrations</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- My Story -->
+  <section class="content-section" id="story" style="background:radial-gradient(circle at 50% 0%,rgba(255,209,102,0.02),transparent)">
+    <div class="section-container">
+      <h2 class="section-title">📖 My Story</h2>
+      <div class="story-container">
+        <div class="story-text">
+          <p>I'm Yonara Anastacio, a first-generation student from Lima, Peru, studying Computer Science and Public Health at Columbia University. I grew up in a fishing village, and now build creative projects that bridge the gap between rigorous computation and real human needs.</p>
+          <p>My work sits at the intersection of research and engineering. I care deeply about accessible interfaces so others can reuse scientific work. I teach and mentor students from underrepresented backgrounds and believe technology should be understandable and useful.</p>
+          <p>When I'm not debugging simulation seeds or writing tests, I compose music inspired by quantum systems, explore data visualizations, and draw on Procreate. I bring ideas from sketch to deployed product.</p>
+          <p>Every project I build carries a piece of my journey: from the shores of Peru to the laboratories of Columbia, driven by curiosity and a commitment to making complex systems accessible to everyone.</p>
+        </div>
+        
+        <div class="facts-card">
+          <h3 style="color:var(--accent);margin-bottom:24px;font-family:Playfair Display">Quick Facts</h3>
+          <div class="fact-item">
+            <div class="fact-label">Education</div>
+            <div class="fact-value">Columbia University| CS & Public Health</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-label">Focus</div>
+            <div class="fact-value">Quantum • AI/ML • Data for Social Good</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-label">Interests</div>
+            <div class="fact-value">Sonification, visualization, reproducible research</div>
+          </div>
+        </div> <!-- /.facts-card -->
+      </div> <!-- /.story-container -->
+    </div> <!-- /.section-container -->
+  </section>
 
-  <iframe 
-    src="space-pals.html"
-    width="100%" 
-    height="600"
-    style="border:none; border-radius:12px; max-width:800px;"
-    loading="lazy"
-  ></iframe>
-</section>
-</main>
+  <!-- Game Section -->
+  <section class="game-section" id="game">
+    <h2 class="game-title">Take a break with this mini- game</h2>
+    <p class="game-desc">Fly around and dodge things. Inspired in llamas and qubits.</p>
+    <iframe
+      src="space-pals.html"
+      width="100%"
+      height="620"
+      style="border:0; border-radius:12px; max-width:1200px; margin:0 auto; display:block;"
+      loading="lazy"
+      referrerpolicy="no-referrer">
+    </iframe>
+  </section>
 
-    <footer>
-      © <span id="year"></span> Yonara Anastacio </a>
-    </footer>
-  </div>
+  <footer>
+    © <span id="year"></span> Yonara Anastacio — Echoes & Horizons
+  </footer>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Neural network activation
+    const photoFrame = document.getElementById('photoFrame');
+    const clickHint = document.getElementById('clickHint');
+    const lines = Array.from(document.querySelectorAll('.neural-line'));
+    const dots = Array.from(document.querySelectorAll('.pulse-dot'));
+    const nodes = Array.from(document.querySelectorAll('.network-node'));
+    let activated = false;
 
-    // Project modal content
-    const projects = {
-      swe1: {kicker:'Systems · Tooling',title:'Realtime WPMTracker',body:'macOS typing pipeline built with Swift and Combine. Focus on efficient sampling, backpressure handling, and unit-tested feature extraction. Deployed via TestFlight for closed beta.',code:'git clone https://github.com/yanastaciocubas/wpmtracker.git\ncd wpmtracker\n./run_tests.sh'},
-      swe2: {kicker:'Full-stack · ML Ops',title:'Admissions Sentiment Dashboard',body:'ETL + model inference pipeline using FastAPI, Docker, and Postgres. Reproducible training, CI for model evaluation, and end-to-end tests.',code:'docker build -t admissions-dashboard .\ndocker run -p 8000:8000 admissions-dashboard'},
-      swe3: {kicker:'Infra · Reliability',title:'Experiment CI for Q-Notebooks',body:'GitHub Actions workflow that runs notebooks, validates numeric outputs against stored traces, and packages artifacts for review.',code:'pytest tests/test_notebooks.py\n# see: .github/workflows/ci.yml'}
-    };
+    if (photoFrame){
+      photoFrame.addEventListener('click', () => {
+        if (activated) return;
+        activated = true;
+        photoFrame.classList.add('active');
+        if (clickHint) clickHint.style.display = 'none';
+        lines.forEach((line, i) => setTimeout(() => line.classList.add('active'), i * 150));
+        dots.forEach((dot, i) => setTimeout(() => dot.classList.add('active'), i * 200));
+        nodes.forEach((node, i) => setTimeout(() => node.classList.add('active'), i * 250 + 600));
+      });
+    }
 
-    document.querySelectorAll('button[data-open]').forEach(btn=>{btn.addEventListener('click',()=>{const id=btn.getAttribute('data-open');const p=projects[id];document.getElementById('modalKicker').textContent=p.kicker;document.getElementById('modalTitle').textContent=p.title;document.getElementById('modalBody').textContent=p.body;document.getElementById('modalCode').textContent=p.code;document.getElementById('modalBackdrop').style.display='flex';})});
-    document.getElementById('modalClose').addEventListener('click',()=>{document.getElementById('modalBackdrop').style.display='none'});
-    document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target===document.getElementById('modalBackdrop'))document.getElementById('modalBackdrop').style.display='none'});
-
-    // Gallery tiles sample handlers
-    const art = {
-      art1:{title:'Quantum Whalesong — poster',body:'Poster art for the Quantum Whalesong project. Export at 2000px wide for high-quality prints.'},
-      art2:{title:'WPMTracker — UI',body:'High-fidelity mockups for the macOS app. Export UI assets as SVG for crispness.'},
-      art3:{title:'DigitalSmog dashboard',body:'Dashboard mockups and geospatial visualizations. Export images at 2x for retina displays.'},
-      art4:{title:'Research diagram',body:'Diagram showing reproducibility pipeline: seeds → simulator matrix → CI traces.'}
-    };
-    document.querySelectorAll('.tile').forEach(t=>{t.addEventListener('click',()=>{const id=t.getAttribute('data-open');const p=art[id];document.getElementById('modalKicker').textContent='Art';document.getElementById('modalTitle').textContent=p.title;document.getElementById('modalBody').textContent=p.body;document.getElementById('modalCode').textContent='';document.getElementById('modalBackdrop').style.display='flex';})});
+    // Footer year
+    const y = document.getElementById('year');
+    if (y) y.textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
