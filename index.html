@@ -1,576 +1,680 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yonara Anastacio — Echoes & Horizons</title>
-  <meta name="description" content="Yonara Anastacio — portfolio & personal story. Quantum research, software engineering projects, and public-facing data tools." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Yonara Anastacio</title>
+<meta name="description" content="Software engineer and public health data scientist. Columbia University. Building tools that matter."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
 
-  <style>
-    :root{--bg:#020617;--muted:#9aa4b2;--accent:#ffd166;--accent2:#60a5fa;--card:#07101a}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#eaf2ff;background:var(--bg);overflow-x:hidden;scroll-behavior:smooth}
-    
-    /* Hero Section with Interactive Photo */
-    .hero-section{min-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;padding:32px 16px}
-    .hero-container{max-width:1400px;width:100%;display:flex;flex-direction:column;align-items:center;gap:48px}
-    
-    /* Interactive Photo Hub */
-    .photo-hub{position:relative;width:100%;max-width:1100px;height:700px;display:flex;align-items:center;justify-content:center}
-    
-    .photo-container{position:relative;width:280px;height:280px;z-index:10}
-    .photo-frame{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));padding:6px;cursor:pointer;transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);position:relative}
-    .photo-frame.active{animation:photoGlow 2s ease-in-out infinite}
-    
-    @keyframes photoGlow{
-      0%,100%{box-shadow:0 0 40px rgba(96,165,250,0.4),0 0 80px rgba(255,209,102,0.2)}
-      50%{box-shadow:0 0 60px rgba(96,165,250,0.6),0 0 120px rgba(255,209,102,0.4)}
-    }
-    
-    .photo-inner{width:100%;height:100%;border-radius:50%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-    .photo-inner img{width:100%;height:100%;object-fit:cover}
-    .photo-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#0f0f1e);display:flex;align-items:center;justify-content:center;font-size:90px;color:var(--accent);font-weight:800;font-family:Playfair Display}
-    
-    .click-hint{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);color:var(--accent2);font-size:15px;white-space:nowrap;font-weight:600;animation:bounce 2s ease-in-out infinite}
-    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-10px)}}
-    
-    /* SVG Neural Network Lines */
-    .neural-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-    .neural-line{stroke:var(--accent2);stroke-width:2;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000;opacity:0}
-    .neural-line.active{animation:drawLine 0.8s ease-out forwards}
-    @keyframes drawLine{to{stroke-dashoffset:0;opacity:0.6}}
-    .pulse-dot{fill:var(--accent);opacity:0}
-    .pulse-dot.active{animation:pulse 1.5s ease-in-out infinite}
-    @keyframes pulse{0%,100%{opacity:0;r:4}50%{opacity:1;r:8}}
-    
-    /* Navigation Nodes */
-    .network-node{position:absolute;width:180px;padding:20px;background:rgba(7,16,26,0.98);border:2px solid rgba(96,165,250,0.3);border-radius:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);backdrop-filter:blur(20px);opacity:0;transform:scale(0.5);pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:5}
-    .network-node.active{opacity:1;transform:scale(1);pointer-events:all}
-    .network-node:hover{transform:scale(1.08) translateY(-5px);border-color:var(--accent);box-shadow:0 12px 48px rgba(96,165,250,0.5)}
-    .node-icon{font-size:36px;margin-bottom:10px;display:block;filter:drop-shadow(0 0 8px currentColor)}
-    .node-title{font-weight:700;font-size:16px;color:#fff;margin-bottom:6px}
-    .node-desc{font-size:13px;color:var(--muted);line-height:1.4}
-    
-   /* Node Positions - Hexagonal Layout */
-    .node-1{top:1%;left:50%;margin-left:-90px}
-    .node-2{top:5%;right:8%}
-    .node-3{top:40%;right:5%}
-    .node-4{bottom:10%;right:15%}
-    .node-5{bottom:10%;left:15%}
-    .node-6{top:40%;left:5%}
-    
-    
-    /* Hero Text */
-    .hero-text{text-align:center;max-width:800px;z-index:10}
-    .hero-text h1{font-family:Playfair Display,serif;font-weight:800;font-size:clamp(42px,6vw,72px);color:#fff;margin-bottom:12px;line-height:1.1;background:linear-gradient(135deg,#fff,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-text .subtitle{color:var(--accent);font-size:22px;font-weight:600;margin-bottom:8px}
-    .hero-text .affiliation{color:var(--muted);font-size:18px;margin-bottom:24px}
-    .hero-text p{color:var(--muted);font-size:16px;line-height:1.7;margin:0 auto}
-    .quick-links{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
-    
-    /* Button Styles */
-    .btn{padding:12px 24px;border-radius:10px;background:transparent;border:2px solid rgba(255,255,255,0.1);color:var(--muted);text-decoration:none;font-weight:600;transition:all 0.3s ease;display:inline-block;cursor:pointer}
-    .btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
-    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#04111a;border:0}
-    
-    /* --- Compact layout adjustments --- */
-    .content-section{min-height:auto;padding:48px 24px;position:relative;z-index:2}
-    .section-container{max-width:1200px;margin:0 auto}
-    .section-title{font-family:Playfair Display,serif;font-size:clamp(32px,4.5vw,48px);color:#fff;margin-bottom:20px;text-align:center}
-    
-    /* Spotlight Section */
-    .spotlight-card{background:linear-gradient(135deg,rgba(96,165,250,0.05),rgba(255,209,102,0.05));border:2px solid rgba(96,165,250,0.2);border-radius:20px;padding:28px;max-width:900px;margin:0 auto;transition:transform 0.3s ease}
-    .spotlight-card:hover{transform:translateY(-5px)}
-    .spotlight-title{font-family:Playfair Display;font-size:36px;color:var(--accent);margin-bottom:16px}
-    .spotlight-desc{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:24px}
-    .spotlight-metrics{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px}
-    .metric{background:rgba(255,255,255,0.03);padding:16px;border-radius:12px;min-width:120px}
-    .metric-value{font-size:32px;font-weight:700;color:var(--accent2)}
-    .metric-label{font-size:13px;color:var(--muted);margin-top:4px}
-    .btn-group{display:flex;gap:12px;flex-wrap:wrap}
-    
-    /* Projects Grid (compact) */
-    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:16px}
-    .project-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:28px;transition:all 0.3s ease;height:100%}
-    .project-card:hover{transform:translateY(-8px);border-color:var(--accent2);box-shadow:0 12px 40px rgba(96,165,250,0.2)}
-    .project-tag{display:inline-block;padding:6px 12px;background:rgba(96,165,250,0.1);color:var(--accent2);border-radius:20px;font-size:12px;font-weight:600;margin-bottom:12px}
-    .project-title{font-size:24px;font-weight:700;color:#fff;margin-bottom:12px}
-    .project-desc{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px}
-    
-    /* Visual Portfolio (compact) */
-    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:16px}
-    .portfolio-item{position:relative;height:280px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1a1a2e,#0f0f1e);cursor:pointer;transition:transform 0.3s ease}
-    .portfolio-item:hover{transform:scale(1.05)}
-    .portfolio-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease;padding:20px;text-align:center}
-    .portfolio-item:hover .portfolio-overlay{opacity:1}
-    .portfolio-text{font-weight:700;color:var(--accent);font-size:18px}
-    
-    /* My Story */
-    .story-container{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
-    @media(max-width:980px){.story-container{grid-template-columns:1fr}}
-    .story-text{color:var(--muted);font-size:16px;line-height:1.8}
-    .story-text p{margin-bottom:16px}
-    .facts-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.05);padding:32px;border-radius:16px}
-    .fact-item{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
-    .fact-item:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
-    .fact-label{color:var(--accent);font-weight:600;margin-bottom:4px}
-    .fact-value{color:var(--muted)}
-    
-    /* Timeline */
-    .timeline{max-width:800px;margin:40px auto;padding-left:40px;border-left:2px solid rgba(96,165,250,0.2)}
-    .timeline-item{margin-bottom:40px;position:relative}
-    .timeline-item::before{content:'';position:absolute;width:16px;height:16px;background:var(--accent);border-radius:50%;left:-49px;top:4px;box-shadow:0 0 20px rgba(255,209,102,0.5)}
-    .timeline-year{color:var(--accent);font-weight:700;font-size:24px;margin-bottom:8px}
-    .timeline-content{color:var(--muted);line-height:1.7}
-    
-    /* Game Section */
-    .game-section{text-align:center;padding:48px 24px;background:rgba(0,0,0,0.25)}
-    .game-title{font-family:Playfair Display;font-size:42px;color:#fff;margin-bottom:16px}
-    .game-desc{color:var(--muted);margin-bottom:24px}
-    
-    /* Footer */
-    footer{text-align:center;padding:40px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.05)}
-    
-    /* "Page in progress" badge (must NOT be inside a media query) */
-    .in-progress{
-      position:fixed;top:14px;right:14px;z-index:9999;padding:6px 10px;
-      font-size:12px;font-weight:700;letter-spacing:.2px;color:#04111a;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.35);opacity:.95;user-select:none;
-    }
+:root {
+  --ink:    #0d0c0b;
+  --ink2:   #3a3836;
+  --ink3:   #888480;
+  --paper:  #f8f6f2;
+  --warm:   #f0ede7;
+  --line:   #e2ddd8;
+  --red:    #b83c24;
+  --serif:  'Instrument Serif', Georgia, serif;
+  --sans:   'Instrument Sans', system-ui, sans-serif;
+}
 
-    /* Mobile layout tweaks */
-    @media(max-width:768px){
-      .photo-hub{height:600px;padding:40px 0}
-      .network-node{width:150px;padding:16px;font-size:13px}
-      .node-icon{font-size:28px}
-      .node-1,.node-2,.node-3,.node-4,.node-5,.node-6{position:absolute}
-      .node-1{top:0;left:50%;margin-left:-75px}
-      .node-2{top:20%;right:5%}
-      .node-3{top:45%;right:0}
-      .node-4{bottom:15%;right:5%}
-      .node-5{bottom:15%;left:5%}
-      .node-6{top:45%;left:0}
-    }
-  </style>
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  mix-blend-mode: multiply;
+}
+.nav-name {
+  font-family: var(--serif);
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.nav-links {
+  display: flex; gap: 32px; list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--red); }
+
+/* ── SECTIONS ───────────────────────────────── */
+/* Each section = full or tall viewport, content centered */
+.s {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 0;
+}
+
+.inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 48px;
+  width: 100%;
+}
+
+/* ── HERO ───────────────────────────────────── */
+#hero {
+  background: var(--paper);
+  padding-top: 100px;
+}
+
+.hero-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 28px;
+  display: block;
+}
+
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(64px, 10vw, 130px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 40px;
+}
+
+.hero-name em {
+  font-style: italic;
+  color: var(--red);
+}
+
+.hero-desc {
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.65;
+  color: var(--ink2);
+  max-width: 580px;
+  margin-bottom: 48px;
+}
+
+.hero-links {
+  display: flex; gap: 28px; flex-wrap: wrap; align-items: center;
+}
+
+.hero-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 2px;
+  letter-spacing: 0.02em;
+  transition: color 0.15s, border-color 0.15s;
+}
+.hero-link:hover { color: var(--red); border-color: var(--red); }
+
+.hero-link.ghost {
+  color: var(--ink3);
+  border-color: var(--line);
+}
+.hero-link.ghost:hover { color: var(--red); border-color: var(--red); }
+
+/* ── DIVIDER LINE ───────────────────────────── */
+.rule { width: 100%; height: 1px; background: var(--line); }
+
+/* ── ABOUT SECTION ──────────────────────────── */
+#about { background: var(--warm); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.section-kicker {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+  display: block;
+  margin-bottom: 20px;
+}
+
+.section-display {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 32px;
+}
+
+.section-display em { font-style: italic; }
+
+.body-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--ink2);
+}
+.body-text p { margin-bottom: 18px; }
+.body-text p:last-child { margin-bottom: 0; }
+.body-text strong { color: var(--ink); font-weight: 500; }
+
+.facts {
+  padding-top: 8px;
+}
+.fact {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fact:first-child { border-top: 1px solid var(--line); }
+.fact-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink3); margin-bottom: 6px;
+}
+.fact-value { font-size: 15px; color: var(--ink); line-height: 1.5; }
+
+/* ── PROJECTS SECTION ───────────────────────── */
+#projects { background: var(--paper); }
+
+.projects-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-bottom: 72px;
+  align-items: end;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.project-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 28px;
+  align-items: start;
+  padding: 36px 0;
+  border-bottom: 1px solid var(--line);
+  transition: opacity 0.15s;
+  color: inherit;
+  text-decoration: none;
+}
+.project-item:first-child { border-top: 1px solid var(--line); }
+.project-item:hover { opacity: 0.72; }
+.project-item:hover .project-title { color: var(--red); }
+.project-item:hover .project-arrow { opacity: 1; transform: translate(2px, -2px); }
+.project-arrow {
+  font-size: 16px;
+  color: var(--ink3);
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  padding-top: 4px;
+}
+
+.project-num {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--ink3);
+  padding-top: 5px;
+  font-style: italic;
+}
+
+.project-body {}
+
+.project-title {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 26px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.2;
+  transition: color 0.15s;
+}
+
+.project-desc {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.65;
+  margin-bottom: 14px;
+  max-width: 560px;
+}
+
+.project-stack {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+.chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink3);
+  font-family: var(--sans);
+  letter-spacing: 0.02em;
+}
+
+.project-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding-top: 6px;
+  white-space: nowrap;
+}
+
+/* ── SKILLS SECTION ─────────────────────────── */
+#skills { background: var(--warm); }
+
+.skills-intro {
+  max-width: 560px;
+  margin-bottom: 64px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.skill-col {
+  padding: 32px 0;
+  border-left: 1px solid var(--line);
+  padding-left: 28px;
+}
+.skill-col:first-child { border-left: none; padding-left: 0; }
+
+.skill-col-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+
+.skill-items {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.skill-item {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.4;
+}
+
+/* ── CONTACT SECTION ────────────────────────── */
+#contact { background: var(--ink); min-height: 70vh; }
+
+#contact .inner { color: #f8f6f2; }
+
+.contact-big {
+  font-family: var(--serif);
+  font-size: clamp(44px, 8vw, 100px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: #f8f6f2;
+  margin-bottom: 48px;
+}
+.contact-big em { font-style: italic; color: #c87a6a; }
+
+.contact-sub {
+  font-size: 17px;
+  color: #8a8680;
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+
+.contact-row {
+  display: flex; gap: 40px; flex-wrap: wrap; align-items: center;
+}
+
+.contact-link-item {
+  font-size: 15px;
+  font-weight: 500;
+  color: #f8f6f2;
+  border-bottom: 1px solid rgba(248,246,242,0.25);
+  padding-bottom: 2px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.contact-link-item:hover { border-color: #c87a6a; color: #c87a6a; }
+
+/* ── GAME SECTION ───────────────────────────── */
+#game { background: var(--paper); min-height: auto; padding: 100px 0; }
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 36px;
+  gap: 40px;
+}
+
+.game-note {
+  font-size: 14px;
+  color: var(--ink3);
+  line-height: 1.6;
+  max-width: 280px;
+  text-align: right;
+}
+
+.game-frame {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #0a0e1a;
+}
+.game-frame iframe {
+  display: block;
+  width: 100%;
+  height: 340px;
+  border: none;
+}
+
+/* ── FOOTER ─────────────────────────────────── */
+footer {
+  background: var(--ink);
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+footer span {
+  font-size: 13px;
+  color: #555;
+}
+footer em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: #666;
+}
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 860px) {
+  nav { padding: 18px 24px; }
+  .nav-links { gap: 20px; }
+  .inner { padding: 0 24px; }
+  .about-grid, .projects-intro { grid-template-columns: 1fr; gap: 40px; }
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+  .project-item { grid-template-columns: 40px 1fr; }
+  .project-tag { display: none; }
+  .game-header { flex-direction: column; align-items: flex-start; }
+  .game-note { text-align: left; }
+  footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+}
+@media (max-width: 560px) {
+  .hero-name { font-size: 52px; }
+  .nav-links { display: none; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .project-item { grid-template-columns: 1fr; gap: 12px; }
+  .project-num { display: none; }
+}
+</style>
 </head>
 <body>
-<div id="cmdk" aria-hidden="true" style="position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);z-index:99999">
-  <div style="width:min(760px,92vw);background:#0b1522;border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:0 30px 120px rgba(0,0,0,.5)">
-    <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
-      <input id="cmdk-input" placeholder="Search projects, sections, pages…" 
-        style="flex:1;padding:10px 12px;border:0;outline:none;background:transparent;color:#eaf2ff;font-size:16px">
-      <span style="opacity:.6;font-size:12px">Esc</span>
+
+<nav>
+  <a href="#hero" class="nav-name">Yonara Anastacio</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────── -->
+<section class="s" id="hero">
+  <div class="inner">
+    <span class="hero-label">Software Engineer · Public Health Data Scientist</span>
+    <h1 class="hero-name">Yonara<br><em>Anastacio</em></h1>
+    <p class="hero-desc">
+      CS &amp; Public Health, Columbia University. I build data systems at the intersection of
+      engineering and health equity. From real-time auction pipelines to algorithmic fairness
+      audits. Originally from Lima, now based in New York.
+    </p>
+    <div class="hero-links">
+      <a href="#projects" class="hero-link">See my work</a>
+      <a href="resume_yonara_anastacio.pdf" target="_blank" class="hero-link ghost">Resume ↗</a>
+      <a href="https://github.com/yanastaciocubas" target="_blank" class="hero-link ghost">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/yonara-anastacio-cubas/" target="_blank" class="hero-link ghost">LinkedIn ↗</a>
     </div>
-    <div id="cmdk-results" style="max-height:52vh;overflow:auto;padding:6px 8px"></div>
   </div>
-</div>
+</section>
 
-  <div class="in-progress">Page in progress</div>
-  
-  <!-- Hero Section with Interactive Neural Network -->
-  <section class="hero-section">
-    <div class="hero-container">
-      
-      <!-- Interactive Photo Hub -->
-      <div class="photo-hub" id="photoHub">
-        <!-- SVG Neural Network -->
-        <svg class="neural-svg" id="neuralSvg">
-          <line class="neural-line" id="line1" x1="50%" y1="50%" x2="50%" y2="5%"/>
-          <line class="neural-line" id="line2" x1="50%" y1="50%" x2="85%" y2="25%"/>
-          <line class="neural-line" id="line3" x1="50%" y1="50%" x2="90%" y2="55%"/>
-          <line class="neural-line" id="line4" x1="50%" y1="50%" x2="75%" y2="85%"/>
-          <line class="neural-line" id="line5" x1="50%" y1="50%" x2="25%" y2="85%"/>
-          <line class="neural-line" id="line6" x1="50%" y1="50%" x2="10%" y2="55%"/>
-          
-          <circle class="pulse-dot" id="dot1" cx="50%" cy="5%" r="6"/>
-          <circle class="pulse-dot" id="dot2" cx="85%" cy="25%" r="6"/>
-          <circle class="pulse-dot" id="dot3" cx="90%" cy="55%" r="6"/>
-          <circle class="pulse-dot" id="dot4" cx="75%" cy="85%" r="6"/>
-          <circle class="pulse-dot" id="dot5" cx="25%" cy="85%" r="6"/>
-          <circle class="pulse-dot" id="dot6" cx="10%" cy="55%" r="6"/>
-        </svg>
-        
-        <div class="photo-container" id="photoTrigger">
-          <div class="photo-frame" id="photoFrame">
-            <div class="photo-inner">
-              <!-- Replace with: <img src="your-photo.jpg" alt="Yonara Anastacio"> -->
-              <div class="photo-placeholder">YA</div>
-            </div>
-          </div>
-          <div class="click-hint" id="clickHint">Click to activate inspired neural network!</div>
-        </div>
-        
-        <!-- Neural Network Navigation Nodes -->
-        <div class="network-node node-1" data-target="software">
-          <div class="node-icon">💻</div>
-          <div class="node-title">Software Engineering</div>
-          <div class="node-desc">Production systems & tooling</div>
-        </div>
-        
-        <div class="network-node node-2" data-target="quantum">
-          <div class="node-icon">⚛️</div>
-          <div class="node-title">Quantum Projects</div>
-          <div class="node-desc">Simulation & sonification</div>
-        </div>
-        
-        <div class="network-node node-3" data-target="datascience">
-          <div class="node-icon">📊</div>
-          <div class="node-title">Data Science</div>
-          <div class="node-desc">Analytics & visualization</div>
-        </div>
-        
-        <div class="network-node node-4" data-target="ai">
-          <div class="node-icon">🤖</div>
-          <div class="node-title">AI Projects</div>
-          <div class="node-desc">ML models & pipelines</div>
-        </div>
-        
-        <div class="network-node node-5" data-target="spotlight">
-          <div class="node-icon">✨</div>
-          <div class="node-title">Science Spotlights</div>
-          <div class="node-desc">Featured research</div>
-        </div>
-        
-        <div class="network-node node-6" data-target="story">
-          <div class="node-icon">📖</div>
-          <div class="node-title">My Story</div>
-          <div class="node-desc">Journey & background</div>
+<div class="rule"></div>
+
+<!-- ── ABOUT ────────────────────────────────── -->
+<section class="s" id="about">
+  <div class="inner">
+    <div class="about-grid">
+      <div>
+        <span class="section-kicker">Background</span>
+        <h2 class="section-display">Building things<br>that <em>actually</em><br>help people.</h2>
+        <div class="body-text">
+          <p>I'm a first-generation computer scientist from Lima, Peru. I double-concentrated in
+          <strong>Computer Science and Public Health</strong> at Columbia, which sounds unusual
+          until you realize most public health problems are, at their core, data infrastructure
+          problems.</p>
+          <p>At Columbia's Data Science Institute I spent two years building open-access curriculum
+          for the <strong>Northeast Big Data Innovation Hub</strong> — five notebooks covering
+          XGBoost, quantum computing, and algorithmic bias, used by students across the region.</p>
+          <p> I'm bilingual in English and Spanish and I can speak French. I'm a TED translator and a Salesforce Agentblazer Champion.</p>
         </div>
       </div>
-      
-      <!-- Hero Text -->
-      <div class="hero-text">
-        <div class="subtitle">Yonara Anastacio</div>
-        <h1> Little's World</h1>
-        <div class="affiliation">Computer Science & Public Health · Columbia University</div>
-        <p>Building signal-to-product pipelines from quantum simulations to scalable engineering systems. Bridging rigorous computation with real human needs through accessible interfaces and reproducible research.</p>
-        
-        <div class="quick-links">
-          <a class="btn primary" href="mailto:yonara.anastacio@columbia.edu">Get in Touch</a>
-          <a class="btn" href="https://github.com/yanastaciocubas" target="_blank">GitHub</a>
-          <a class="btn" href="/resume.pdf">Resume</a>
+      <div class="facts">
+        <div class="fact">
+          <div class="fact-label">Education</div>
+          <div class="fact-value"><B class="A"></B>. Computer Science &amp; Public Health<br>Columbia University, 2026</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Languages</div>
+          <div class="fact-value">English, Spanish — native bilingual</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Research</div>
+          <div class="fact-value">Columbia Irving Medical Center<br>Northeast Big Data Innovation Hub</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Awards</div>
+          <div class="fact-value">Carl M. Brukenfeld Scholarship<br>NYC HAQ Hackathon — 1st place<br>NYU Abu Dhabi Hackathon — 2nd place</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Certifications</div>
+          <div class="fact-value">Salesforce Agentblazer Champion 2026<br>TED 2026 Delegate &amp; Vetted Translator</div>
         </div>
       </div>
     </div>
-  </section>
-  
-  <!-- Quantum Whalesong Spotlight -->
-  <section class="content-section" id="spotlight" style="background:radial-gradient(circle at 50% 0%,rgba(96,165,250,0.03),transparent)">
-    <div class="section-container">
-      <h2 class="section-title">Project Spotlight</h2>
-      <div class="spotlight-card">
-        <div class="spotlight-title">Quantum Whalesong</div>
-        <div class="spotlight-desc">
-          Mapping quantum amplitudes to MIDI events, validated against simulated distributions and shipped with comprehensive tests & CI. This project demonstrates how quantum computation can create beautiful, deterministic sonification while maintaining engineering rigor and reproducibility for both researchers and engineers.
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ── PROJECTS ──────────────────────────────── -->
+<section class="s" id="projects">
+  <div class="inner">
+    <div class="projects-intro">
+      <div>
+        <span class="section-kicker">Work</span>
+        <h2 class="section-display">Selected<br><em>projects</em></h2>
+      </div>
+      <p style="font-size:16px;color:var(--ink2);line-height:1.7;align-self:end;">
+        From event-driven infrastructure to open-access curriculum. All built with real
+        constraints and real people in mind.
+      </p>
+    </div>
+
+    <div class="projects-list">
+
+      <a class="project-item" href="https://github.com/yanastaciocubas/ad-auction-fairness-engine" target="_blank" rel="noopener">
+        <div class="project-num">01</div>
+        <div class="project-body">
+          <div class="project-title">Ad Auction Fairness Engine</div>
+          <p class="project-desc">Event-driven pipeline that processes real-time ad bids and flags violations of fairness constraints ( protected attribute parity, demographic reach parity)before serving. Kafka for stream processing, Spring Boot for the API, PostgreSQL for audit logging.</p>
+          <div class="project-stack">
+            <span class="chip">Kafka</span><span class="chip">Spring Boot</span><span class="chip">PostgreSQL</span><span class="chip">Docker</span><span class="chip">Java</span>
+          </div>
         </div>
-        <div class="btn-group">
-          <a class="btn primary" href="https://github.com/yanastaciocubas/quantum-whalesong" target="_blank">View Repository</a>
-          <a class="btn" href="#">Technical Docs</a>
-          <a class="btn" href="#">Listen to Samples</a>
+        <div class="project-tag">Distributed Systems <span class="project-arrow">↗</span></div>
+      </a>
+
+      <a class="project-item" href="https://github.com/yanastaciocubas/agent-crm" target="_blank" rel="noopener">
+        <div class="project-num">02</div>
+        <div class="project-body">
+          <div class="project-title">AgentCRM</div>
+          <p class="project-desc">Multi-agent Python pipeline for automated support ticket classification and escalation routing. LLM-based triage agent, domain-specific classifier, and a rules engine that reduces mean time-to-resolve by surfacing high-urgency tickets first.</p>
+          <div class="project-stack">
+            <span class="chip">Python</span><span class="chip">LangChain</span><span class="chip">FastAPI</span><span class="chip">Redis</span>
+          </div>
+        </div>
+        <div class="project-tag">Multi-agent AI <span class="project-arrow">↗</span></div>
+      </a>
+
+      <a class="project-item" href="https://github.com/yanastaciocubas/veritas-flag" target="_blank" rel="noopener">
+        <div class="project-num">03</div>
+        <div class="project-body">
+          <div class="project-title">Veritas Flag</div>
+          <p class="project-desc">Fraud detection pipeline trained on the UCI credit card dataset. XGBoost classifier with SMOTE for class imbalance, SHAP for explainability, and a FastAPI endpoint for real-time scoring. Built to be interpretable, as every flag comes with a reason.</p>
+          <div class="project-stack">
+            <span class="chip">XGBoost</span><span class="chip">SMOTE</span><span class="chip">SHAP</span><span class="chip">FastAPI</span><span class="chip">Python</span>
+          </div>
+        </div>
+        <div class="project-tag">ML · Fraud Detection <span class="project-arrow">↗</span></div>
+      </a>
+
+      <div class="project-item" style="cursor:default;">
+        <div class="project-num">05</div>
+        <div class="project-body">
+          <div class="project-title">COMPAS Algorithmic Bias Audit</div>
+          <p class="project-desc">Fairness audit of the COMPAS recidivism prediction system using SHAP values and ProPublica's dataset. Identified racial disparity patterns across prediction thresholds and produced a reproducible notebook used in university classrooms across the Northeast.</p>
+          <div class="project-stack">
+            <span class="chip">Python</span><span class="chip">SHAP</span><span class="chip">scikit-learn</span><span class="chip">pandas</span>
+          </div>
+        </div>
+        <div class="project-tag">AI Fairness</div>
+      </div>
+
+      <div class="project-item" style="cursor:default;">
+        <div class="project-num">06</div>
+        <div class="project-body">
+          <div class="project-title">GeneLiFT (Genetic Literacy Tool)</div>
+          <p class="project-desc">Developed at Columbia Irving Medical Center to improve genetic literacy for Spanish-speaking communities. Translates complex genomic information into plain-language bilingual explanations, tested for reading level and health literacy alignment.</p>
+          <div class="project-stack">
+            <span class="chip">Python</span><span class="chip">NLP</span><span class="chip">Spanish</span><span class="chip">Health Equity</span>
+          </div>
+        </div>
+        <div class="project-tag">Research</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ── SKILLS ────────────────────────────────── -->
+<section class="s" id="skills">
+  <div class="inner">
+    <div class="skills-intro">
+      <span class="section-kicker">Toolkit</span>
+      <h2 class="section-display">Technical<br><em>skills</em></h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-col">
+        <div class="skill-col-title">Languages</div>
+        <div class="skill-items">
+          <span class="skill-item">Python</span>
+          <span class="skill-item">Java</span>
+          <span class="skill-item">JavaScript</span>
+          <span class="skill-item">SQL / PostgreSQL</span>
+          <span class="skill-item">R</span>
+          <span class="skill-item">HTML / CSS</span>
+        </div>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-title">Frameworks &amp; Infra</div>
+        <div class="skill-items">
+          <span class="skill-item">Spring Boot</span>
+          <span class="skill-item">FastAPI</span>
+          <span class="skill-item">LangChain</span>
+          <span class="skill-item">Kafka</span>
+          <span class="skill-item">Docker</span>
+          <span class="skill-item">Redis</span>
+        </div>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-title">ML &amp; Research</div>
+        <div class="skill-items">
+          <span class="skill-item">scikit-learn</span>
+          <span class="skill-item">XGBoost / Keras</span>
+          <span class="skill-item">SHAP</span>
+          <span class="skill-item">Qiskit / PennyLane</span>
+          <span class="skill-item">pandas / NumPy</span>
+          <span class="skill-item">Tableau</span>
         </div>
       </div>
     </div>
-  </section>
-  
-  <!-- Software Engineering Projects -->
-  <section class="content-section" id="software">
-    <div class="section-container">
-      <h2 class="section-title">💻 Software Engineering</h2>
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-tag">Systems · Tooling</div>
-          <div class="project-title">Quantum-Xpose</div>
-          <div class="project-desc">Description.</div>
-          <div class="btn-group">
-            <a class="btn" href="https://github.com/yanastaciocubas/wpmtracker" target="_blank">View Repo</a>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-tag">Full-stack · ML Ops</div>
-          <div class="project-title">Admissions Dashboard</div>
-          <div class="project-desc">Description.</div>
-          <div class="btn-group">
-            <a class="btn" href="#">View Project</a>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-tag">Infra · Reliability</div>
-          <div class="project-title">Experiment CI</div>
-          <div class="project-desc">Description</div>
-          <div class="btn-group">
-            <a class="btn" href="https://github.com/yanastaciocubas/q-notebook-ci" target="_blank">View Repo</a>
-          </div>
-        </div>
-      </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ───────────────────────────────── -->
+<section class="s" id="contact">
+  <div class="inner">
+    <h2 class="contact-big">Let's<br><em>talk.</em></h2>
+    <p class="contact-sub">Open to roles in software engineering, public health data science, and research engineering. Always happy to talk about fairness, data infrastructure, or anything Peru-adjacent.</p>
+    <div class="contact-row">
+      <a href="mailto:yonara.anastacio@columbia.edu" class="contact-link-item">yanastaciocubas@gmail.com</a>
+      <a href="https://github.com/yanastaciocubas" target="_blank" class="contact-link-item">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/yonara-anastacio-cubas/" target="_blank" class="contact-link-item">LinkedIn ↗</a>
+      <a href="resume_yonara_anastacio.pdf" target="_blank" class="contact-link-item">Resume ↗</a>
     </div>
-  </section>
-  
-  <!-- Quantum Projects -->
-  <section class="content-section" id="quantum" style="background:rgba(0,0,0,0.2)">
-    <div class="section-container">
-      <h2 class="section-title">⚛️ Quantum Projects</h2>
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-tag">Research · Sonification</div>
-          <div class="project-title">Quantum Whalesong</div>
-          <div class="project-desc">Deterministic sonification of quantum states with full CI/CD pipeline and reproducible notebooks.</div>
-          <div class="btn-group">
-            <a class="btn primary" href="#spotlight">View Spotlight</a>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-tag">Simulation · Qiskit</div>
-          <div class="project-title">Quantum Amplitude Mapping</div>
-          <div class="project-desc">Custom simulator for extracting and visualizing quantum amplitudes with statistical validation.</div>
-          <div class="btn-group">
-            <a class="btn" href="#">Explore</a>
-          </div>
-        </div>
+  </div>
+</section>
+
+<!-- ── GAME ──────────────────────────────────── -->
+<section class="s" id="game">
+  <div class="inner">
+    <div class="game-header">
+      <div>
+        <span class="section-kicker">Just for fun</span>
+        <h2 class="section-display" style="margin-bottom:0;">Llama<br><em>Quantum Dash</em></h2>
       </div>
+      <p class="game-note">A pixel llama runs through a quantum circuit. Jump over measurement detectors. Collect qubits.<br><br>Space / tap to jump &nbsp;·&nbsp; P pause &nbsp;·&nbsp; R restart</p>
     </div>
-  </section>
-  
-  <!-- Data Science Projects -->
-  <section class="content-section" id="datascience">
-    <div class="section-container">
-      <h2 class="section-title">📊 Data Science</h2>
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-tag">Analytics · Visualization</div>
-          <div class="project-title">Public Health ...</div>
-          <div class="project-desc">Description.</div>
-          <div class="btn-group">
-            <a class="btn" href="#">View Demo</a>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-tag">ETL · Pipeline</div>
-          <div class="project-title">Data Processing Framework</div>
-          <div class="project-desc">Description.</div>
-          <div class="btn-group">
-            <a class="btn" href="#">Learn More</a>
-          </div>
-        </div>
-      </div>
+    <div class="game-frame">
+      <iframe src="space-pals.html" scrolling="no" loading="lazy" title="Llama Quantum Dash"></iframe>
     </div>
-  </section>
-  
-  <!-- AI Projects -->
-  <section class="content-section" id="ai" style="background:rgba(0,0,0,0.2)">
-    <div class="section-container">
-      <h2 class="section-title">🤖 AI Projects</h2>
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-tag">ML · Computer Vision</div>
-          <div class="project-title">Visual Recognition System</div>
-          <div class="project-desc">Description</div>
-          <div class="btn-group">
-            <a class="btn" href="#">Explore</a>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-tag">NLP · Research</div>
-          <div class="project-title">Text Analysis Pipeline</div>
-          <div class="project-desc">Description.</div>
-          <div class="btn-group">
-            <a class="btn" href="#">View Project</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Visual Portfolio -->
-  <section class="content-section">
-    <div class="section-container">
-      <h2 class="section-title"> Visual Portfolio</h2>
-      <p style="text-align:center;color:var(--muted);margin-bottom:20px">Illustrations and designs from projects</p>
-      <div class="portfolio-grid">
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Quantum Whalesong<br/>Poster Design</div></div>
-        </div>
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Project<br/>UI Mockups</div></div>
-        </div>
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Dashboard<br/>Visualizations</div></div>
-        </div>
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Research<br/>Diagrams</div></div>
-        </div>
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Neural Network<br/>Architecture</div></div>
-        </div>
-        <div class="portfolio-item">
-          <div class="portfolio-overlay"><div class="portfolio-text">Data Flow<br/>Illustrations</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- My Story -->
-  <section class="content-section" id="story" style="background:radial-gradient(circle at 50% 0%,rgba(255,209,102,0.02),transparent)">
-    <div class="section-container">
-      <h2 class="section-title">📖 My Story</h2>
-      <div class="story-container">
-        <div class="story-text">
-          <p>I'm Yonara Anastacio, a first-generation student from Lima, Peru, studying Computer Science and Public Health at Columbia University. I grew up in a fishing village, and now build creative projects that bridge the gap between rigorous computation and real human needs.</p>
-          <p>My work sits at the intersection of research and engineering. I care deeply about accessible interfaces so others can reuse scientific work. I teach and mentor students from underrepresented backgrounds and believe technology should be understandable and useful.</p>
-          <p>When I'm not debugging simulation seeds or writing tests, I compose music inspired by quantum systems, explore data visualizations, and draw on Procreate. I bring ideas from sketch to deployed product.</p>
-          <p>Every project I build carries a piece of my journey: from the shores of Peru to the laboratories of Columbia, driven by curiosity and a commitment to making complex systems accessible to everyone.</p>
-        </div>
-        
-        <div class="facts-card">
-          <h3 style="color:var(--accent);margin-bottom:24px;font-family:Playfair Display">Quick Facts</h3>
-          <div class="fact-item">
-            <div class="fact-label">Education</div>
-            <div class="fact-value">Columbia University| CS & Public Health</div>
-          </div>
-          <div class="fact-item">
-            <div class="fact-label">Focus</div>
-            <div class="fact-value">Quantum • AI/ML • Data for Social Good</div>
-          </div>
-          <div class="fact-item">
-            <div class="fact-label">Interests</div>
-            <div class="fact-value">Sonification, visualization, reproducible research</div>
-          </div>
-        </div> <!-- /.facts-card -->
-      </div> <!-- /.story-container -->
-    </div> <!-- /.section-container -->
-  </section>
+  </div>
+</section>
 
-  <!-- Game Section -->
-  <section class="game-section" id="game">
-    <h2 class="game-title">Take a break with this mini- game</h2>
-    <p class="game-desc">Fly around and dodge things. Inspired in llamas and qubits.</p>
-    <iframe
-      src="space-pals.html"
-      width="100%"
-      height="620"
-      style="border:0; border-radius:12px; max-width:1200px; margin:0 auto; display:block;"
-      loading="lazy"
-      referrerpolicy="no-referrer">
-    </iframe>
-  </section>
-
-  <footer>
-    © <span id="year"></span> Yonara Anastacio — Echoes & Horizons
-  </footer>
-
-  <script>
-    // Neural network activation
-    const photoFrame = document.getElementById('photoFrame');
-    const clickHint = document.getElementById('clickHint');
-    const lines = Array.from(document.querySelectorAll('.neural-line'));
-    const dots = Array.from(document.querySelectorAll('.pulse-dot'));
-    const nodes = Array.from(document.querySelectorAll('.network-node'));
-    let activated = false;
-
-    if (photoFrame){
-      photoFrame.addEventListener('click', () => {
-        if (activated) return;
-        activated = true;
-        photoFrame.classList.add('active');
-        if (clickHint) clickHint.style.display = 'none';
-        lines.forEach((line, i) => setTimeout(() => line.classList.add('active'), i * 150));
-        dots.forEach((dot, i) => setTimeout(() => dot.classList.add('active'), i * 200));
-        nodes.forEach((node, i) => setTimeout(() => node.classList.add('active'), i * 250 + 600));
-      });
-    }
-
-    // Footer year
-    const y = document.getElementById('year');
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
-  <script>
-  const PALETTE_DATA = [
-  {t:"Go to • Software", k:"software systems", href:"#software"},
-  {t:"Go to • Quantum", k:"quantum qiskit", href:"#quantum"},
-  {t:"Go to • Data Science", k:"data analytics", href:"#datascience"},
-  {t:"Go to • AI", k:"ai ml", href:"#ai"},
-  {t:"Go to • My Story", k:"story peru background", href:"#story"},
-  {t:"Open • Resume.pdf", k:"resume cv", href:"/resume.pdf", ext:true},
-  {t:"GitHub • yanastaciocubas", k:"github", href:"https://github.com/yanastaciocubas", ext:true},
-  {t:"Project • Quantum Whalesong", k:"quantum whalesong audio sonification", href:"#spotlight"},
-];
-
-const overlay = document.getElementById('cmdk');
-const input = document.getElementById('cmdk-input');
-const list = document.getElementById('cmdk-results');
-
-function openPalette(){
-  overlay.style.display='grid';
-  overlay.ariaHidden='false';
-  input.value='';
-  render('');
-  input.focus();
-}
-function closePalette(){
-  overlay.style.display='none';
-  overlay.ariaHidden='true';
-}
-function score(q,item){
-  q=q.toLowerCase().trim(); if(!q) return 1;
-  const hay=(item.t+" "+(item.k||"")).toLowerCase();
-  let i=0,s=0;
-  for(const ch of q){
-    const j=hay.indexOf(ch,i);
-    if(j<0)return 0;
-    s+=1-(j-i>5?0.2:0);
-    i=j+1;
-  }
-  return s/q.length+(hay.includes(q)?0.5:0);
-}
-function render(q){
-  const ranked=PALETTE_DATA.map(d=>({d,s:score(q,d)}))
-    .filter(x=>x.s>0)
-    .sort((a,b)=>b.s-a.s)
-    .slice(0,12);
-  list.innerHTML=ranked.map(x=>`
-    <button data-href="${x.d.href}" data-ext="${!!x.d.ext}"
-      style="width:100%;text-align:left;background:#0b1522;
-             border:1px solid rgba(255,255,255,.06);
-             border-radius:10px;padding:12px 14px;margin:6px 4px;
-             cursor:pointer;color:#eaf2ff">
-      ${x.d.t}
-    </button>`).join('') || `<div style="opacity:.6;padding:16px">No matches.</div>`;
-  list.querySelectorAll('button').forEach(b=>{
-    b.addEventListener('click',()=>{
-      const href=b.dataset.href;
-      const ext=b.dataset.ext==='true';
-      closePalette();
-      if(ext) window.open(href,'_blank');
-      else document.querySelector(href)?.scrollIntoView({behavior:'smooth'});
-    });
-  });
-}
-window.addEventListener('keydown',e=>{
-  const mac=navigator.platform.toUpperCase().includes('MAC');
-  if((mac&&e.metaKey&&e.key.toLowerCase()==='k')||
-     (!mac&&e.ctrlKey&&e.key.toLowerCase()==='k')){
-    e.preventDefault();
-    openPalette();
-  }
-  if(e.key==='Escape'&&overlay.style.display!=='none') closePalette();
-});
-overlay.addEventListener('click',e=>{
-  if(e.target===overlay) closePalette();
-});
-input.addEventListener('input',e=>render(e.target.value));
-</script>
-
-
-
-
+<footer>
+  <span> © 2026 Yonara Anastacio · New York</span>
+  <em> </em>
+</footer>
 
 </body>
 </html>

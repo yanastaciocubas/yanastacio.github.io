@@ -1,729 +1,680 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Llama Quantum Dash — Mini Game</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Llama Quantum Dash</title>
 <style>
-  :root{
-    --bg1: #081224;
-    --bg2: #0b1b2a;
-    --accent: #ffd166;
-    --qubit: #9be7ff;
-    --gate: #7d5fff;
-    --llama: #D9D6CA;
-    --llama-accent: #e09a7b;
-    --muted: #9fb3c8;
-  }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--muted)}
-  body{
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(180deg,var(--bg1),var(--bg2));
-    padding:18px;
-  }
-
-  .container{
-    width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-    border-radius:14px;padding:14px;box-shadow:0 10px 40px rgba(2,6,12,0.6);
-    display:grid;grid-template-columns:1fr 300px;gap:14px;
-  }
-
-  .play{
-    background:linear-gradient(120deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
-    border-radius:10px;padding:10px;position:relative;overflow:hidden;
-    display:flex;flex-direction:column;
-  }
-  canvas{width:100%;height:560px;border-radius:8px;background:transparent;display:block}
-
-  .sidebar{
-    padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:12px;
-  }
-  .title{display:flex;align-items:center;gap:10px}
-  .badge{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#ff9f5a);display:flex;align-items:center;justify-content:center;font-weight:800;color:#102}
-  h1{font-size:1.05rem;margin:0;color:#fff}
-  .stat{background:rgba(255,255,255,0.03);padding:8px;border-radius:8px;font-weight:700;color:#fff;text-align:center}
-
-  .controls{display:flex;gap:8px;flex-wrap:wrap}
-  button{padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(180deg,var(--accent),#ffaf4a);color:#081224;font-weight:700;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted)}
-
-  .hint{font-size:0.86rem;color:var(--muted)}
-  .kbd{display:inline-block;background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:6px;margin-left:6px;font-weight:700}
-
-  @media (max-width:980px){
-    .container{grid-template-columns:1fr; padding:10px}
-    canvas{height:420px}
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #0a0e1a; overflow: hidden; }
+body { display: flex; align-items: center; justify-content: center; }
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  max-width: 100%;
+}
 </style>
 </head>
 <body>
-<div class="container" role="application" aria-label="Llama Quantum Dash game">
-  <div class="play">
-    <canvas id="game" aria-label="Llama Quantum Dash canvas"></canvas>
-    <div id="overlay" style="position:absolute;left:0;right:0;top:8px;display:flex;justify-content:center;pointer-events:none"></div>
-  </div>
-
-  <aside class="sidebar" aria-hidden="false">
-    <div class="title">
-      <div class="badge">LQ</div>
-      <div>
-        <h1>Llama Quantum Dash</h1>
-        <div class="hint">Cute llama runs through a quantum circuit — collect qubits & avoid measurement!</div>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div>
-        <div style="font-size:0.8rem;color:var(--muted)">Score</div>
-        <div id="score" class="stat">0</div>
-      </div>
-      <div>
-        <div style="font-size:0.8rem;color:var(--muted)">Lives</div>
-        <div id="lives" class="stat">3</div>
-      </div>
-    </div>
-
-    <div style="margin-top:4px">
-      <div style="font-size:0.9rem;color:var(--muted)">Controls</div>
-      <div style="margin-top:6px">
-        <span class="kbd">↑ / W</span> Move Up<br/>
-        <span class="kbd">↓ / S</span> Move Down<br/>
-        <span class="kbd">Mouse</span> Hover near llama → she runs away!<br/>
-        <span class="kbd">R</span> Restart
-      </div>
-    </div>
-
-    <div class="controls">
-      <button id="start">Start</button>
-      <button id="pause" class="ghost">Pause</button>
-      <button id="reset" class="ghost">Reset</button>
-    </div>
-
-    <div style="margin-top:8px;font-size:0.9rem;color:var(--muted)">
-      Tips:
-      <ul style="margin:6px 0 0 18px;padding:0;color:var(--muted)">
-        <li>Get qubits (+10 points)</li>
-        <li>Don't touch measurement detectors (−1 life)</li>
-        <li>Hover your mouse near the llama to make her run (try it!)</li>
-      </ul>
-    </div>
-    </div>
-  </aside>
-</div>
-
+<canvas id="c"></canvas>
 <script>
-/* Llama Quantum Dash
-   - Canvas-based, no external assets
-   - Keyboard: Up/Down or W/S
-   - Mouse hover: llama flees from cursor
-   - Collect qubits, avoid detectors
-*/
+// ── CONSTANTS (defined first, always) ────────────────────────
+var GRAVITY  = 600;
+var JUMP_VEL = -270;
+var LLAMA_X  = 80;
+var SCALE    = 3;   // px per sprite pixel
+var GW       = 640; // game width
+var GH       = 300; // game height
+var GY       = GH - 48; // ground Y
 
-(() => {
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+// ── CANVAS SETUP ─────────────────────────────────────────────
+var canvas = document.getElementById('c');
+var ctx    = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+canvas.width  = GW;
+canvas.height = GH;
 
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(600, Math.floor(rect.width * dpr));
-    canvas.height = Math.floor((rect.height || 560) * dpr);
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = (rect.height || 560) + 'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+function fitCanvas() {
+  var maxW  = Math.min(window.innerWidth, 900);
+  var scale = Math.max(1, Math.floor(maxW / GW));
+  canvas.style.width  = (GW * scale) + 'px';
+  canvas.style.height = (GH * scale) + 'px';
+}
+fitCanvas();
+window.addEventListener('resize', fitCanvas);
+
+// ── PALETTE ───────────────────────────────────────────────────
+var P = {
+  sky0: '#080c18', sky1: '#0f1828', sky2: '#182238',
+  g0:   '#1c1208', g1:   '#2d1f10', g2:   '#3e2b14',
+  gr0:  '#283e16', gr1:  '#395620', gr2:  '#4a7028',
+  br:   '#8b5e3c',  // bear brown
+  db:   '#5a3a20',  // dark brown
+  tn:   '#c8986a',  // tan muzzle
+  ns:   '#1a0a06', ey:   '#0a0604',
+  q0:   '#50b8f8', q1:   '#90d8ff', q2:   '#ffffff',
+  ob0:  '#c84b2f', ob1:  '#e05030', ob2:  '#ffb030',
+  hd:   '#f5f2ee', hdm:  '#8a8480',
+  ac:   '#c84b2f',
+  pt:   '#ffd060',
+};
+
+// ── TINY PIXEL FONT (5×7) ─────────────────────────────────────
+var GLYPHS = {
+  ' ':[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  'A':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+  'B':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0]],
+  'C':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,1],[0,1,1,1,0]],
+  'D':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0]],
+  'E':[[1,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+  'G':[[0,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  'H':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+  'I':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
+  'J':[[0,0,0,1,0],[0,0,0,1,0],[0,0,0,1,0],[0,0,0,1,0],[1,0,0,1,0],[1,0,0,1,0],[0,1,1,0,0]],
+  'K':[[1,0,0,0,1],[1,0,0,1,0],[1,0,1,0,0],[1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1]],
+  'L':[[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+  'M':[[1,0,0,0,1],[1,1,0,1,1],[1,0,1,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+  'N':[[1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+  'O':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  'P':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]],
+  'Q':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,1,0],[0,1,1,0,1]],
+  'R':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1]],
+  'S':[[0,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[0,1,1,1,0],[0,0,0,0,1],[0,0,0,0,1],[1,1,1,1,0]],
+  'T':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+  'U':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  'V':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,1,0,1,0],[0,0,1,0,0]],
+  'W':[[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,1,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
+  'X':[[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1]],
+  'Y':[[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+  'Z':[[1,1,1,1,1],[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+  '0':[[0,1,1,1,0],[1,0,0,1,1],[1,0,1,0,1],[1,1,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  '1':[[0,0,1,0,0],[0,1,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
+  '2':[[0,1,1,1,0],[1,0,0,0,1],[0,0,0,0,1],[0,0,1,1,0],[0,1,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+  '3':[[1,1,1,1,0],[0,0,0,0,1],[0,0,0,0,1],[0,1,1,1,0],[0,0,0,0,1],[0,0,0,0,1],[1,1,1,1,0]],
+  '4':[[0,0,0,1,0],[0,0,1,1,0],[0,1,0,1,0],[1,0,0,1,0],[1,1,1,1,1],[0,0,0,1,0],[0,0,0,1,0]],
+  '5':[[1,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,0],[0,0,0,0,1],[0,0,0,0,1],[1,1,1,1,0]],
+  '6':[[0,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  '7':[[1,1,1,1,1],[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,1,0,0,0]],
+  '8':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+  '9':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,1],[0,0,0,0,1],[0,0,0,0,1],[0,1,1,1,0]],
+  '!':[[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,1,0,0]],
+  ':':[[0,0,0],[0,0,1],[0,0,0],[0,0,0],[0,0,1],[0,0,0],[0,0,0]],
+  '-':[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+};
+
+function drawText(str, x, y, color, sc) {
+  sc = sc || 1;
+  ctx.fillStyle = color;
+  var cx = x;
+  for (var i = 0; i < str.length; i++) {
+    var ch = str[i].toUpperCase();
+    var g  = GLYPHS[ch];
+    if (!g) { cx += 4 * sc; continue; }
+    var cols = g[0].length;
+    for (var r = 0; r < 7; r++) {
+      for (var c = 0; c < g[r].length; c++) {
+        if (g[r][c]) ctx.fillRect(cx + c * sc, y + r * sc, sc, sc);
+      }
+    }
+    cx += (cols + 1) * sc;
   }
-  // ensure canvas has a default size if style not set
-  canvas.style.width = '100%';
-  canvas.style.height = '560px';
-  resize();
-  window.addEventListener('resize', resize);
+}
 
-  // UI
-  const scoreEl = document.getElementById('score');
-  const livesEl = document.getElementById('lives');
-  const overlay = document.getElementById('overlay');
+function textW(str, sc) {
+  sc = sc || 1;
+  return str.length * 6 * sc;
+}
 
-  // Game state
-  let running = false, paused = false;
-  let score = 0, lives = 3, best = Number(localStorage.getItem('llama_best')||0);
-  let lastTs = 0;
+// ── LLAMA SPRITE (16 cols × 20 rows) ─────────────────────────
+// chars: 0-3 = body shades, w = wool, n = nose, e = eye, space = transparent
+// Bear sprites: 14 cols x 18 rows. Faces right.
+// b=brown, d=dark brown, t=tan muzzle, e=eye, n=nose, h=hurt-red, ' '=transparent
+var SPR_RUN_A = [
+  '  bb  bb      ', // 0  round ears
+  ' bbbb bbbb    ', // 1  ear filled
+  ' bbbbbbbbbb   ', // 2  top of head
+  ' bbbebbbbb    ', // 3  eye
+  ' bbbbbbbbbt   ', // 4  head + snout
+  ' bbbbbbbbttt  ', // 5  snout
+  ' bbbbbbbbtnt  ', // 6  nose
+  '  bbbbbbb t   ', // 7  chin
+  '  dddddddddd  ', // 8  shoulders
+  '  bbbbbbbbbb  ', // 9  body
+  '  bbbbbbbbbb  ', //10
+  '  bbbbbbbbbb  ', //11
+  '  bbbbbbbbbb  ', //12
+  '  ddbbbbbbdd  ', //13  belly shading
+  '   bb bb bb   ', //14  legs A
+  '   bb bb bb   ', //15
+  '   dd dd dd   ', //16  paws
+  '              ', //17
+];
+var SPR_RUN_B = [
+  '  bb  bb      ', // 0
+  ' bbbb bbbb    ', // 1
+  ' bbbbbbbbbb   ', // 2
+  ' bbbebbbbb    ', // 3
+  ' bbbbbbbbbt   ', // 4
+  ' bbbbbbbbttt  ', // 5
+  ' bbbbbbbbtnt  ', // 6
+  '  bbbbbbb t   ', // 7
+  '  dddddddddd  ', // 8
+  '  bbbbbbbbbb  ', // 9
+  '  bbbbbbbbbb  ', //10
+  '  bbbbbbbbbb  ', //11
+  '  bbbbbbbbbb  ', //12
+  '  ddbbbbbbdd  ', //13
+  '   bbbb  bb   ', //14  legs B mid-stride
+  '   bbbb  bb   ', //15
+  '    ddd   d   ', //16
+  '              ', //17
+];
+var SPR_JUMP = [
+  '  bb  bb      ', // 0
+  ' bbbb bbbb    ', // 1
+  ' bbbbbbbbbb   ', // 2
+  ' bbbebbbbb    ', // 3
+  ' bbbbbbbbbt   ', // 4
+  ' bbbbbbbbttt  ', // 5
+  ' bbbbbbbbtnt  ', // 6
+  '  bbbbbbb t   ', // 7
+  '  dddddddddd  ', // 8
+  '  bbbbbbbbbb  ', // 9
+  '  bbbbbbbbbb  ', //10
+  '  bbbbbbbbbb  ', //11
+  '  bbbbbbbbbb  ', //12
+  '  ddbbbbbbdd  ', //13
+  '    bbbb bb   ', //14  legs tucked
+  '    bbbb bb   ', //15
+  '              ', //16
+  '              ', //17
+];
+var SPR_HURT = [
+  '  bb  bb      ', // 0
+  ' bbbb bbbb    ', // 1
+  ' bbbbbbbbbb   ', // 2
+  ' bbbebbbbb    ', // 3
+  ' bbbbbbbbbt   ', // 4
+  ' bbbbbbbbttt  ', // 5
+  ' bbbbbbbbtnt  ', // 6
+  '  bbbbbbb t   ', // 7
+  '  hhhhhhhhhh  ', // 8  red flash
+  '  hhhhhhhhhh  ', // 9
+  '  hhhhhhhhhh  ', //10
+  '  hhhhhhhhhh  ', //11
+  '  hhhhhhhhhh  ', //12
+  '  hhhhhhhhhh  ', //13
+  '   bb bb bb   ', //14
+  '   bb bb bb   ', //15
+  '   dd dd dd   ', //16
+  '              ', //17
+];
 
-  // Llama entity
-  const llama = {
-    x: 120, y: canvas.clientHeight / 2, w: 140, h: 110,
-    vy: 0, speed: 360, fleeSpeed: 620,
-    color: (getComputedStyle(document.documentElement).getPropertyValue('--llama') || '#f4d3c2').trim(),
-    accent: (getComputedStyle(document.documentElement).getPropertyValue('--llama-accent') || '#e09a7b').trim(),
-    boundingRadius: 56,
-    bob: 0
-  };
+var COLORMAP = {
+  'b': P.br,  // brown fur
+  'd': P.db,  // dark brown
+  't': P.tn,  // tan muzzle
+  'e': P.ey,  // eye
+  'n': P.ns,  // nose
+  'h': P.ob1, // hurt red flash
+  ' ': null
+};
 
-  // Circuit (scrolling left)
-  const wires = 5;
-  const wireY = [];
-  const gates = []; // {x,y,type,width}
-  const things = []; // qubits and detectors: {x,y,type,vx,r}
-  let scroll = 0;
-  let spawnTimer = 0;
-  let spawnInterval = 1300;
+function drawSprite(grid, ox, oy, sc) {
+  for (var r = 0; r < grid.length; r++) {
+    var row = grid[r];
+    for (var c = 0; c < row.length; c++) {
+      var col = COLORMAP[row[c]];
+      if (col) {
+        ctx.fillStyle = col;
+        ctx.fillRect(ox + c * sc, oy + r * sc, sc, sc);
+      }
+    }
+  }
+}
 
-  // input
-  const keys = {};
-  window.addEventListener('keydown', (e)=>{ keys[e.key] = true; if (e.key === 'r' || e.key === 'R') restart(); if (e.key === 'p' || e.key === 'P') togglePause(); });
-  window.addEventListener('keyup', (e)=>{ keys[e.key] = false; });
+// ── QUBIT (animated diamond) ──────────────────────────────────
+function drawQubit(x, y, sc, tk) {
+  // simple rotating diamond, 8×8
+  var cx = x + 4 * sc, cy = y + 4 * sc;
+  var r  = (3 + Math.sin(tk * 0.08)) * sc;
+  ctx.fillStyle = P.q0;
+  // diamond shape via 4 triangles
+  ctx.beginPath();
+  ctx.moveTo(cx,     cy - r);
+  ctx.lineTo(cx + r, cy);
+  ctx.lineTo(cx,     cy + r);
+  ctx.lineTo(cx - r, cy);
+  ctx.closePath();
+  ctx.fill();
+  // inner bright
+  var r2 = r * 0.45;
+  ctx.fillStyle = P.q1;
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - r2);
+  ctx.lineTo(cx + r2, cy);
+  ctx.lineTo(cx,      cy + r2);
+  ctx.lineTo(cx - r2, cy);
+  ctx.closePath();
+  ctx.fill();
+  // center
+  ctx.fillStyle = P.q2;
+  ctx.fillRect(cx - sc * 0.5, cy - sc * 0.5, sc, sc);
+  // sparkle
+  if (Math.floor(tk / 8) % 2 === 0) {
+    ctx.fillStyle = P.q2;
+    ctx.fillRect(cx + r - sc, cy - r, sc, sc);
+  }
+}
 
-  // mouse
-  let mouse = {x: -9999, y: -9999};
-  window.addEventListener('mousemove', (e)=>{
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
+// ── DETECTOR OBSTACLE ─────────────────────────────────────────
+function drawDetector(x, y, sc, tk) {
+  var blink = Math.floor(tk / 6) % 2;
+  var w = 10 * sc, h = 10 * sc;
+  // frame
+  ctx.fillStyle = P.ob0;
+  ctx.fillRect(x, y, w, h);
+  // inner
+  ctx.fillStyle = P.ob1;
+  ctx.fillRect(x + sc, y + sc, w - 2 * sc, h - 2 * sc);
+  // blinking center
+  ctx.fillStyle = blink ? P.ob2 : P.ob0;
+  ctx.fillRect(x + 3 * sc, y + 3 * sc, 4 * sc, 4 * sc);
+  ctx.fillStyle = blink ? '#ffffff' : P.ob1;
+  ctx.fillRect(x + 4 * sc, y + 4 * sc, 2 * sc, 2 * sc);
+  // tripod legs
+  ctx.fillStyle = P.ob0;
+  ctx.fillRect(x + 2 * sc, y + h, sc, 3 * sc);
+  ctx.fillRect(x + 5 * sc, y + h, sc, 3 * sc);
+  ctx.fillRect(x + 8 * sc, y + h, sc, 3 * sc);
+}
+
+// ── STARS ─────────────────────────────────────────────────────
+var STARS = [];
+for (var i = 0; i < 50; i++) {
+  STARS.push({
+    x:  Math.random() * GW,
+    y:  Math.random() * GH * 0.6,
+    sz: Math.random() < 0.12 ? 2 : 1,
+    ph: Math.random() * 200,
   });
-  window.addEventListener('mouseleave', ()=>{ mouse.x = -9999; mouse.y = -9999; });
+}
 
-  // touch -> map to pointer for simple hover behavior
-  window.addEventListener('touchstart', (e)=> {
-    const t = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = t.clientX - rect.left;
-    mouse.y = t.clientY - rect.top;
-  }, {passive:false});
-  window.addEventListener('touchmove', (e)=> {
-    const t = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = t.clientX - rect.left;
-    mouse.y = t.clientY - rect.top;
-  }, {passive:false});
-  window.addEventListener('touchend', ()=>{ mouse.x = -9999; mouse.y = -9999; });
-
-  // helpers
-  function rand(min,max){ return Math.random()*(max-min)+min }
-  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-
-  // init wires Y positions
-  function resetCircuit(){
-    wireY.length = 0;
-    const step = canvas.clientHeight / (wires + 1);
-    for (let i=1;i<=wires;i++) wireY.push(i * step);
-    gates.length = 0;
-    things.length = 0;
-    scroll = 0;
-    spawnTimer = 0;
+// ── PARTICLES ─────────────────────────────────────────────────
+var PARTS = [];
+function burst(x, y, color, n) {
+  n = n || 8;
+  for (var i = 0; i < n; i++) {
+    var a  = (Math.PI * 2 * i / n) + Math.random() * 0.4;
+    var sp = 40 + Math.random() * 80;
+    PARTS.push({
+      x: x, y: y,
+      vx: Math.cos(a) * sp,
+      vy: Math.sin(a) * sp - 60,
+      life: 1.0,
+      decay: 1.2 + Math.random() * 0.8,
+      color: color,
+      sz: 2,
+    });
   }
-  resetCircuit();
+}
 
-  // spawn gates occasionally (cosmetic) and things (qubit collectible or detector)
-  function spawn() {
-    // spawn qubit mostly, detector less frequently
-    const w = canvas.clientWidth;
-    const x = w + rand(40,120);
-    const lane = Math.floor(rand(0, wireY.length));
-    const y = wireY[lane] + rand(-18,18);
-    if (Math.random() < 0.75) {
-      things.push({x,y,type:'qubit',vx:-rand(80,160),r:14,angle:rand(0,Math.PI*2),twinkle:Math.random()*1});
-    } else {
-      things.push({x,y,type:'detector',vx:-rand(100,190),r:22});
-    }
+// ── GAME STATE ────────────────────────────────────────────────
+var LW = 14 * SCALE;
+var LH = 18 * SCALE;
 
-    // cosmetic gate occasionally
-    if (Math.random() < 0.45) {
-      gates.push({x:x+rand(20,80), y: wireY[Math.floor(rand(0,wireY.length))], type: Math.random()<0.5?'H':'X', w: rand(28,46)});
-    }
+var state      = 'title';
+var score      = 0;
+var best       = 0;
+var lives      = 3;
+var tick       = 0;
+var scrollX    = 0;
+var speed      = 88;
+
+var llamaY     = GY - LH;
+var llamaVY    = 0;
+var onGround   = true;
+var hurtTimer  = 0;
+var legFrame   = 0;
+var legTimer   = 0;
+
+var things     = [];   // obstacles and qubits
+var spawnTimer = 0;
+var spawnEvery = 1.9;
+
+var jumpPending = false;
+
+// ── INPUT ─────────────────────────────────────────────────────
+var keysHeld = {};
+
+window.addEventListener('keydown', function(e) {
+  if (keysHeld[e.key]) return;
+  keysHeld[e.key] = true;
+  var isJump = e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W';
+  if (isJump) {
+    jumpPending = true;
+    if (state === 'title') { state = 'playing'; }
+    else if (state === 'dead') { restartGame(); }
+    else if (state === 'paused') { state = 'playing'; }
   }
-
-  // update UI
-  function updateUI(){
-    scoreEl.textContent = score;
-    livesEl.textContent = lives;
-    if (score > best){ best = score; localStorage.setItem('llama_best', best); }
+  if ((e.key === 'p' || e.key === 'P')) {
+    if (state === 'playing') state = 'paused';
+    else if (state === 'paused') state = 'playing';
   }
-
-  function showOverlay(text){
-    overlay.innerHTML = '';
-    const el = document.createElement('div');
-    el.style.background = 'rgba(0,0,0,0.45)';
-    el.style.color = 'white';
-    el.style.padding = '8px 12px';
-    el.style.borderRadius = '8px';
-    el.style.fontWeight = '800';
-    el.style.pointerEvents = 'none';
-    el.textContent = text;
-    overlay.appendChild(el);
+  if ((e.key === 'r' || e.key === 'R') && (state === 'playing' || state === 'dead')) {
+    restartGame();
   }
+  if (isJump || e.key === 'p' || e.key === 'r' || e.key === 'P' || e.key === 'R') {
+    e.preventDefault();
+  }
+});
 
-  // NEW: draw llama (more llama-like)
-  function drawLlama(x,y,scale=1,flip=false){
-    ctx.save();
-    ctx.translate(x,y);
-    if (flip) ctx.scale(-1,1);
+window.addEventListener('keyup', function(e) { keysHeld[e.key] = false; });
 
-    // small vertical bob
-    const bob = Math.sin(perf*0.004) * 3 * scale;
+canvas.addEventListener('pointerdown', function(e) {
+  e.preventDefault();
+  jumpPending = true;
+  if (state === 'title') { state = 'playing'; }
+  else if (state === 'dead') { restartGame(); }
+  else if (state === 'paused') { state = 'playing'; }
+});
 
-    // shadow
-    ctx.beginPath();
-    ctx.fillStyle = 'rgba(0,0,0,0.14)';
-    ctx.ellipse(0, 36*scale, 48*scale, 14*scale, 0,0,Math.PI*2);
-    ctx.fill();
+// ── RESTART ───────────────────────────────────────────────────
+function restartGame() {
+  score      = 0;
+  lives      = 3;
+  speed      = 88;
+  scrollX    = 0;
+  llamaY     = GY - LH;
+  llamaVY    = 0;
+  onGround   = true;
+  hurtTimer  = 0;
+  legFrame   = 0;
+  legTimer   = 0;
+  things     = [];
+  PARTS      = [];
+  spawnTimer = 0;
+  spawnEvery = 1.9;
+  tick       = 0;
+  state      = 'playing';
+}
 
-    // body (rounded, with slight fluff)
-    ctx.fillStyle = llama.color;
-    roundedRectPath(ctx, -54*scale, -6*scale + bob, 108*scale, 56*scale, 16*scale);
-    ctx.fill();
+// ── COLLISION (axis-aligned, slightly shrunk) ─────────────────
+function overlaps(ax, ay, aw, ah, bx, by, bw, bh) {
+  var sh = 8;
+  return ax + sh < bx + bw - sh &&
+         ax + aw - sh > bx + sh &&
+         ay + sh < by + bh - sh &&
+         ay + ah - sh > by + sh;
+}
 
-    // fluffy chest / neck fur overlay
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.beginPath();
-    ctx.moveTo(-10*scale, 0*scale + bob);
-    ctx.quadraticCurveTo(-4*scale, -14*scale + bob, 8*scale, -8*scale + bob);
-    ctx.quadraticCurveTo(18*scale, -4*scale + bob, 26*scale, -10*scale + bob);
-    ctx.quadraticCurveTo(10*scale, -4*scale + bob, -10*scale, 0*scale + bob);
-    ctx.closePath(); ctx.fill();
+// ── DRAWING ───────────────────────────────────────────────────
+function drawBG() {
+  ctx.fillStyle = P.sky0; ctx.fillRect(0, 0, GW, GH * 0.3);
+  ctx.fillStyle = P.sky1; ctx.fillRect(0, GH * 0.3, GW, GH * 0.3);
+  ctx.fillStyle = P.sky2; ctx.fillRect(0, GH * 0.6, GW, GH * 0.4);
 
-    // rear fluff / tail
-    ctx.save();
-    ctx.translate(44*scale, 2*scale + bob);
-    ctx.rotate(-0.35);
-    roundedRectPath(ctx, -6*scale, -10*scale, 18*scale, 22*scale, 8*scale);
-    ctx.fillStyle = llama.accent;
-    ctx.fill();
-    // tail tuft
-    ctx.beginPath();
-    ctx.fillStyle = llama.color;
-    ctx.ellipse(18*scale, -2*scale, 8*scale, 6*scale, 0,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // legs (front and back, layered)
-    ctx.fillStyle = '#d1b7a6';
-    // front legs (closer to viewer)
-    roundedRectPath(ctx, -30*scale, 36*scale + bob, 12*scale, 26*scale, 4*scale);
-    ctx.fill();
-    roundedRectPath(ctx, 8*scale, 36*scale + bob, 12*scale, 26*scale, 4*scale);
-    ctx.fill();
-
-    // hooves
-    ctx.fillStyle = '#7a5f4f';
-    ctx.fillRect(-30*scale, 56*scale + bob, 12*scale, 6*scale);
-    ctx.fillRect(8*scale, 56*scale + bob, 12*scale, 6*scale);
-
-    // neck (slightly angled) and head
-    ctx.save();
-    ctx.translate(26*scale, -10*scale + bob);
-    ctx.rotate(-0.12);
-    // neck
-    roundedRectPath(ctx, -12*scale, -4*scale, 24*scale, 36*scale, 8*scale);
-    ctx.fillStyle = llama.color;
-    ctx.fill();
-
-    // head
-    ctx.save();
-    ctx.translate(20*scale, -28*scale);
-    // face main
-    ctx.beginPath();
-    ctx.fillStyle = llama.color;
-    ctx.ellipse(0, 0, 22*scale, 26*scale, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    // muzzle (distinct, slightly darker)
-    ctx.beginPath();
-    ctx.fillStyle = '#e6cdbd';
-    ctx.ellipse(6*scale, 8*scale, 12*scale, 8*scale, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    // nostrils
-    ctx.fillStyle = '#2b2018';
-    ctx.beginPath(); ctx.ellipse(4*scale, 9*scale, 2.2*scale, 1.6*scale, 0,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(8*scale, 9*scale, 2.2*scale, 1.6*scale, 0,0,Math.PI*2); ctx.fill();
-
-    // eye (friendly)
-    ctx.beginPath(); ctx.fillStyle = '#1b1211'; ctx.ellipse(-6*scale, -2*scale, 3.5*scale, 4.5*scale, 0,0,Math.PI*2); ctx.fill();
-    // tiny eye shine
-    ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.ellipse(-8*scale, -3.5*scale, 1.1*scale, 1.1*scale, 0,0,Math.PI*2); ctx.fill();
-
-    // ear left
-    ctx.beginPath();
-    ctx.fillStyle = llama.accent;
-    ctx.moveTo(-10*scale, -18*scale);
-    ctx.quadraticCurveTo(-16*scale, -36*scale, -4*scale, -40*scale);
-    ctx.quadraticCurveTo(0*scale, -22*scale, -10*scale, -18*scale);
-    ctx.fill();
-    // ear right
-    ctx.beginPath();
-    ctx.fillStyle = llama.accent;
-    ctx.moveTo(6*scale, -18*scale);
-    ctx.quadraticCurveTo(10*scale, -34*scale, 18*scale, -30*scale);
-    ctx.quadraticCurveTo(6*scale, -18*scale, 6*scale, -18*scale);
-    ctx.fill();
-
-    // cheek blush
-    ctx.beginPath(); ctx.fillStyle = 'rgba(255,120,120,0.14)'; ctx.ellipse(10*scale, 2*scale, 6*scale, 4*scale, 0,0,Math.PI*2); ctx.fill();
-
-    ctx.restore(); // head
-    ctx.restore(); // neck + head
-
-    // small saddle decoration (quantum patch)
-    ctx.save();
-    ctx.translate(-10*scale, -2*scale + bob);
-    roundedRectPath(ctx, -14*scale, -6*scale, 28*scale, 12*scale, 4*scale);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--gate') || '#7d5fff';
-    ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = `${8*scale}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Ψ', 0, 0);
-    ctx.restore();
-
-    ctx.restore();
+  // stars
+  for (var i = 0; i < STARS.length; i++) {
+    var s = STARS[i];
+    var a = 0.35 + 0.65 * Math.sin(tick * 0.018 + s.ph);
+    ctx.fillStyle = 'rgba(180,210,255,' + a.toFixed(2) + ')';
+    var sx = ((s.x - scrollX * 0.01) % GW + GW) % GW;
+    ctx.fillRect(Math.floor(sx), Math.floor(s.y), s.sz, s.sz);
   }
 
-  // helper: rounded rectangle path
-  function roundedRectPath(ctx, x, y, w, h, r){
-    const rr = Math.min(r, w/2, h/2);
-    ctx.beginPath();
-    ctx.moveTo(x+rr, y);
-    ctx.lineTo(x+w-rr, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+rr);
-    ctx.lineTo(x+w, y+h-rr);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-rr, y+h);
-    ctx.lineTo(x+rr, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-rr);
-    ctx.lineTo(x, y+rr);
-    ctx.quadraticCurveTo(x, y, x+rr, y);
-    ctx.closePath();
+  // parallax hills (far)
+  drawHills(scrollX * 0.12, GH - 85, 7, P.sky2, 110, 28);
+  // parallax hills (mid)
+  drawHills(scrollX * 0.30, GH - 62, 13, P.g1, 70, 18);
+}
+
+function drawHills(sx, baseY, seed, color, period, amp) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, GH);
+  for (var px = 0; px <= GW + period; px += 2) {
+    var hx = px + sx;
+    var hy = baseY
+           - amp * (0.5 + 0.5 * Math.sin(hx / period * Math.PI * 2 + seed))
+           - amp * 0.25 * Math.sin(hx / period * Math.PI * 3.7 + seed * 1.5);
+    ctx.lineTo(px, hy);
   }
+  ctx.lineTo(GW + period, GH);
+  ctx.closePath();
+  ctx.fill();
+}
 
-  // draw circuit wires and gates
-  function drawCircuit(scrollOffset){
-    const w = canvas.clientWidth;
-    // wires
-    ctx.save();
-    ctx.lineWidth = 2;
-    for (let i=0;i<wireY.length;i++){
-      const y = wireY[i];
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
-    }
-
-    // gates
-    for (let i=gates.length-1;i>=0;i--){
-      const g = gates[i];
-      g.x += -120 * (1/60) * (1/60) * 0; // keep static relative to world (we'll offset when draw)
-      const sx = g.x - scrollOffset;
-      if (sx < -120) { gates.splice(i,1); continue; }
-      if (sx > -40 && sx < w+80){
-        ctx.save();
-        ctx.translate(sx, g.y);
-        // gate box
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--gate') || '#7d5fff';
-        ctx.fillRect(-g.w/2, -18, g.w, 36);
-        // label
-        ctx.fillStyle = 'white'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline='middle';
-        ctx.fillText(g.type, 0, 0);
-        ctx.restore();
-      }
-    }
-    ctx.restore();
+function drawGround() {
+  ctx.fillStyle = P.g2; ctx.fillRect(0, GY,     GW, GH - GY);
+  ctx.fillStyle = P.g1; ctx.fillRect(0, GY + 6, GW, GH - GY - 6);
+  // grass strip
+  ctx.fillStyle = P.gr0; ctx.fillRect(0, GY - 4, GW, 6);
+  ctx.fillStyle = P.gr1; ctx.fillRect(0, GY - 2, GW, 4);
+  ctx.fillStyle = P.gr2; ctx.fillRect(0, GY,     GW, 2);
+  // tufts
+  for (var gx = -(scrollX % 28 | 0); gx < GW + 28; gx += 28) {
+    var bx = Math.floor(gx);
+    ctx.fillStyle = P.gr1;
+    ctx.fillRect(bx,      GY - 6, 2, 4);
+    ctx.fillRect(bx + 5,  GY - 8, 2, 6);
+    ctx.fillRect(bx + 11, GY - 5, 2, 3);
+    ctx.fillStyle = P.gr2;
+    ctx.fillRect(bx + 5,  GY - 8, 1, 3);
   }
+  // scrolling circuit line
+  ctx.fillStyle = 'rgba(100,60,200,0.12)';
+  for (var lx = -(scrollX * 0.9 % 36 | 0); lx < GW; lx += 36) {
+    ctx.fillRect(Math.floor(lx), GY - 1, 18, 1);
+  }
+}
 
-  // draw things (qubits + detectors)
-  function drawThings(){
-    for (const t of things){
-      if (t.type === 'qubit'){
-        // sparkling orb
-        const grd = ctx.createRadialGradient(t.x, t.y, 2, t.x, t.y, t.r*2);
-        grd.addColorStop(0, 'rgba(255,255,255,0.98)');
-        grd.addColorStop(0.2, 'rgba(155,231,255,0.95)');
-        grd.addColorStop(1, 'rgba(155,231,255,0.06)');
-        ctx.fillStyle = grd;
-        ctx.beginPath(); ctx.ellipse(t.x, t.y, t.r, t.r, t.angle, 0, Math.PI*2); ctx.fill();
-
-        // little sparkle
-        ctx.beginPath(); ctx.fillStyle='rgba(255,255,255,0.7)';
-        ctx.fillRect(t.x-1, t.y- t.r - 4 * (0.5 + 0.5*Math.sin(t.twinkle*5)), 2,2);
-      } else {
-        // detector: stylized measurement device
-        ctx.save();
-        ctx.translate(t.x, t.y);
-        ctx.fillStyle = 'rgba(255,120,120,0.95)';
-        roundedRectPath(ctx, -18, -18, 36, 36, 6); ctx.fill();
-        ctx.fillStyle='rgba(0,0,0,0.9)';
-        ctx.fillRect(-6, -6, 12, 12);
-        ctx.restore();
+function drawHUD() {
+  // score
+  drawText('SCORE:' + score, 8, 8, P.hd, 2);
+  drawText('BEST:' + best, 8, 22, P.hdm, 1);
+  // pixel hearts
+  var heart = [
+    [0,1,0,1,0],
+    [1,1,1,1,1],
+    [1,1,1,1,1],
+    [0,1,1,1,0],
+    [0,0,1,0,0],
+  ];
+  for (var i = 0; i < 3; i++) {
+    var hx = GW - 14 - (2 - i) * 14;
+    var hy = 8;
+    ctx.fillStyle = i < lives ? P.ac : '#333';
+    for (var r = 0; r < heart.length; r++) {
+      for (var c = 0; c < heart[r].length; c++) {
+        if (heart[r][c]) ctx.fillRect(hx + c * 2, hy + r * 2, 2, 2);
       }
     }
   }
+}
 
-  // collision detection
-  function intersectCircleRect(cx,cy,r, rx,ry,rw,rh){
-    // circle center cx,cy, radius r ; rect x,y,w,h (x,y at top-left)
-    const closestX = clamp(cx, rx, rx+rw);
-    const closestY = clamp(cy, ry, ry+rh);
-    const dx = cx - closestX, dy = cy - closestY;
-    return (dx*dx + dy*dy) < (r*r);
+function drawOverlay(alpha) {
+  ctx.fillStyle = 'rgba(0,0,0,' + alpha + ')';
+  ctx.fillRect(0, 0, GW, GH);
+}
+
+function centeredPanel(pw, ph) {
+  var px = (GW - pw) / 2, py = (GH - ph) / 2;
+  ctx.fillStyle = 'rgba(8,12,24,0.94)';
+  ctx.fillRect(px, py, pw, ph);
+  ctx.fillStyle = P.gr1;
+  ctx.fillRect(px, py, pw, 2); ctx.fillRect(px, py + ph - 2, pw, 2);
+  ctx.fillRect(px, py, 2, ph); ctx.fillRect(px + pw - 2, py, 2, ph);
+  return { px: px, py: py };
+}
+
+function drawTitleScreen() {
+  drawOverlay(0.5);
+  var p = centeredPanel(260, 120);
+  var t1 = 'LLAMA DASH'; drawText(t1, (GW - textW(t1, 3)) / 2, p.py + 10, P.q1, 3);
+  var t2 = 'QUANTUM CIRCUIT RUNNER'; drawText(t2, (GW - textW(t2, 1)) / 2, p.py + 38, P.hdm, 1);
+  if (Math.floor(tick / 28) % 2 === 0) {
+    var t3 = 'SPACE OR TAP TO START'; drawText(t3, (GW - textW(t3, 1)) / 2, p.py + 56, P.hd, 1);
   }
+  var t4 = 'JUMP OVER DETECTORS - COLLECT QUBITS'; drawText(t4, (GW - textW(t4, 1)) / 2, p.py + 74, P.hdm, 1);
+  var t5 = 'P PAUSE   R RESTART'; drawText(t5, (GW - textW(t5, 1)) / 2, p.py + 88, P.hdm, 1);
+}
 
-  // handle llama fleeing when mouse near
-  function handleLlamaFlee(dt){
-    const rect = canvas.getBoundingClientRect();
-    const mx = mouse.x, my = mouse.y;
-    if (mx < 0 || my < 0 || mx > rect.width || my > rect.height) return false;
-    const dx = llama.x - mx;
-    const dy = llama.y - my;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    const safeRadius = llama.boundingRadius * 1.1;
-    if (dist < safeRadius + 80) {
-      // compute flee vector away from mouse
-      const nx = dx / (dist || 1);
-      const ny = dy / (dist || 1);
-      llama.vy = -ny * llama.fleeSpeed; // vertical flee
-      // make llama also dash horizontally a bit
-      llama.x += nx * 20 * (dt/16);
-      // small cooldown bob
-      llama.bob = 1.2;
-      return true;
-    }
-    return false;
+function drawDeadScreen() {
+  drawOverlay(0.6);
+  var p = centeredPanel(220, 90);
+  var t1 = 'GAME OVER'; drawText(t1, (GW - textW(t1, 2)) / 2, p.py + 10, P.ac, 2);
+  var t2 = 'SCORE:' + score; drawText(t2, (GW - textW(t2, 2)) / 2, p.py + 30, P.hd, 2);
+  var t3 = 'BEST: ' + best; drawText(t3, (GW - textW(t3, 1)) / 2, p.py + 52, P.hdm, 1);
+  if (Math.floor(tick / 25) % 2 === 0) {
+    var t4 = 'SPACE TO RESTART'; drawText(t4, (GW - textW(t4, 1)) / 2, p.py + 68, P.q1, 1);
   }
+}
 
-  // main update
-  function update(dt){
-    if (!running || paused) return;
+function drawPauseScreen() {
+  drawOverlay(0.42);
+  var t = 'PAUSED'; drawText(t, (GW - textW(t, 3)) / 2, GH / 2 - 14, P.hd, 3);
+  var t2 = 'P TO RESUME'; drawText(t2, (GW - textW(t2, 1)) / 2, GH / 2 + 14, P.hdm, 1);
+}
 
-    // input vertical movement
-    let vyInput = 0;
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) vyInput = -llama.speed;
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) vyInput = llama.speed;
-    // mixing with current vy (flee effect)
-    llama.vy = (llama.vy*0.7) + (vyInput*0.3);
+// ── MAIN LOOP ─────────────────────────────────────────────────
+var lastTime = 0;
 
-    // mouse hover flee: stronger effect; override vertical input a bit
-    const fled = handleLlamaFlee(dt);
-    if (fled) {
-      // slightly boost vertical speed if fleeing
-      llama.vy *= 1.1;
-    }
+function loop(now) {
+  var dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
 
-    // apply motion
-    llama.y += llama.vy * dt / 1000;
-    // bobbing
-    llama.bob *= 0.92;
-    llama.y += Math.sin(perf)*0.6 * llama.bob;
-
-    // clamp within canvas
-    llama.y = clamp(llama.y, 60, canvas.clientHeight - 80);
-
-    // scroll world to left
-    const scrollSpeed = 160 + score*2;
-    scroll += scrollSpeed * dt / 1000;
+  // ── UPDATE ──────────────────────────────────────────────────
+  if (state === 'playing') {
+    tick++;
+    speed   = Math.min(220, 88 + score * 0.85);
+    scrollX += speed * dt;
 
     // spawn things
     spawnTimer += dt;
-    if (spawnTimer > spawnInterval) { spawn(); spawnTimer = 0; spawnInterval = clamp(900 - score*4, 600, 1600); }
-
-    // update things positions (move left)
-    for (let i=things.length-1;i>=0;i--){
-      const t = things[i];
-      t.x += t.vx * dt / 1000;
-      if (t.type === 'qubit') {
-        t.angle += 0.02;
-        t.twinkle += 0.05;
+    if (spawnTimer >= spawnEvery) {
+      spawnTimer = 0;
+      spawnEvery = Math.max(0.85, 1.9 - score * 0.012);
+      var tx = GW + 20;
+      if (Math.random() < 0.38) {
+        // detector — ground level
+        things.push({ type: 'obs', x: tx, y: GY - 13 * SCALE, w: 10 * SCALE, h: 13 * SCALE, alive: true });
+      } else {
+        // qubit — varying heights
+        var heights = [GY - 40, GY - 66, GY - 92, GY - 120];
+        var ty = heights[Math.floor(Math.random() * heights.length)];
+        things.push({ type: 'qb', x: tx, y: ty, w: 8 * SCALE, h: 8 * SCALE, alive: true });
       }
-      // off-screen removal
-      if (t.x < -80) things.splice(i,1);
-      else {
-        // collision with llama
-        // approximate llama rect
-        const rx = llama.x - 48, ry = llama.y - 48, rw = 96, rh = 96;
-        if (intersectCircleRect(t.x, t.y, t.r, rx, ry, rw, rh)) {
-          if (t.type === 'qubit') {
-            score += 10;
-            // sparkle animation
-            sparkle(t.x, t.y);
-          } else {
-            lives = Math.max(0, lives - 1);
-            showOverlay('Ouch — measurement!'); setTimeout(()=>overlay.innerHTML='',800);
-            // slight knockback
-            llama.x = Math.max(72, llama.x - 40);
-          }
-          things.splice(i,1);
-          updateUI();
-          if (lives <= 0) endGame();
+    }
+
+    // jump
+    if (jumpPending && onGround) {
+      llamaVY  = JUMP_VEL;
+      onGround = false;
+      burst(LLAMA_X + LW / 2, llamaY + LH, P.gr2, 5);
+    }
+    jumpPending = false;
+
+    // physics
+    llamaVY += GRAVITY * dt;
+    llamaY  += llamaVY * dt;
+
+    if (llamaY >= GY - LH) {
+      llamaY   = GY - LH;
+      if (llamaVY > 80) burst(LLAMA_X + LW / 2, llamaY + LH, P.gr2, 4);
+      llamaVY  = 0;
+      onGround = true;
+    }
+
+    // leg animation
+    if (onGround) {
+      legTimer += dt * speed * 0.06;
+      if (legTimer >= 1) { legTimer = 0; legFrame = legFrame === 0 ? 1 : 0; }
+    }
+
+    // hurt timer
+    if (hurtTimer > 0) hurtTimer -= dt;
+
+    // things
+    for (var i = things.length - 1; i >= 0; i--) {
+      var th = things[i];
+      th.x -= speed * dt;
+      if (!th.alive || th.x < -100) { things.splice(i, 1); continue; }
+
+      if (th.type === 'qb') {
+        if (overlaps(LLAMA_X, llamaY, LW, LH, th.x, th.y, th.w, th.h)) {
+          score++;
+          if (score > best) best = score;
+          burst(th.x + th.w / 2, th.y + th.h / 2, P.q1, 10);
+          th.alive = false;
+        }
+      } else {
+        if (hurtTimer <= 0 && overlaps(LLAMA_X, llamaY, LW, LH, th.x, th.y, th.w, th.h)) {
+          lives--;
+          hurtTimer = 1.4;
+          burst(LLAMA_X + LW / 2, llamaY + LH / 2, P.ob1, 12);
+          if (lives <= 0) state = 'dead';
         }
       }
     }
 
-    // gates cleaning: remove gates that are far left
-    for (let i=gates.length-1;i>=0;i--){
-      if (gates[i].x - scroll < -200) gates.splice(i,1);
+    // particles
+    for (var j = PARTS.length - 1; j >= 0; j--) {
+      var pt = PARTS[j];
+      pt.x    += pt.vx * dt;
+      pt.y    += pt.vy * dt;
+      pt.vy   += 200 * dt;
+      pt.life -= pt.decay * dt;
+      if (pt.life <= 0) PARTS.splice(j, 1);
     }
-
-    // occasionally push a cosmetic gate left to maintain look
-    if (Math.random() < 0.01) {
-      gates.push({x: canvas.clientWidth + rand(40,220) + scroll, y: wireY[Math.floor(rand(0, wireY.length))], type: Math.random()<0.6?'H':'X', w: rand(28,44)});
-    }
-
-    // gentle auto-correct llama x toward base as she flees a bit horizontally
-    llama.x = clamp( llama.x + (120 - llama.x) * 0.02, 72, canvas.clientWidth - 120 );
+  } else {
+    tick++;
+    jumpPending = false;
   }
 
-  // tiny sparkle effect (visual only)
-  const sparks = [];
-  function sparkle(x,y){
-    for (let i=0;i<8;i++){
-      sparks.push({x,y, vx: rand(-80,80), vy: rand(-180,-40), life: 500 + rand(0,400)});
-    }
+  // ── DRAW ────────────────────────────────────────────────────
+  drawBG();
+  drawGround();
+
+  // things
+  for (var k = 0; k < things.length; k++) {
+    var t2 = things[k];
+    if (!t2.alive) continue;
+    if (t2.type === 'qb') drawQubit(t2.x, t2.y, SCALE, tick);
+    else drawDetector(t2.x, t2.y, SCALE, tick);
   }
 
-  // draw everything
-  let perf = 0;
-  function draw(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    // clear with slight gradient
-    ctx.clearRect(0,0,w,h);
-    // background stars / gradient
-    const g = ctx.createLinearGradient(0,0,0,h);
-    g.addColorStop(0, 'rgba(12,20,34,0.9)');
-    g.addColorStop(1, 'rgba(2,6,12,0.95)');
-    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
-    // moving faint nebula
-    ctx.save();
-    ctx.globalAlpha = 0.12;
-    ctx.beginPath();
-    ctx.ellipse(w*0.5 - (scroll%400)/2, h*0.3, 420, 180, 0,0,Math.PI*2);
-    ctx.fillStyle = 'rgba(140,80,180,0.12)'; ctx.fill();
-    ctx.restore();
-
-    // draw circuit wires & gates (offset by scroll)
-    ctx.save();
-    ctx.translate(- (scroll % (w+400)), 0);
-    drawCircuit(scroll % (w+400));
-    // draw second pass to cover wrapping
-    ctx.translate(w+400, 0);
-    drawCircuit((scroll + w+400) % (w+400));
-    ctx.restore();
-
-    // draw things
-    drawThings();
-
-    // draw llama near foreground
-    drawLlama(llama.x, llama.y + Math.sin(perf*0.004)*3, 1.0);
-
-    // draw sparks
-    for (let i=sparks.length-1;i>=0;i--){
-      const s = sparks[i];
-      s.x += s.vx * (dtCache/1000);
-      s.y += s.vy * (dtCache/1000);
-      s.life -= dtCache;
-      if (s.life <= 0) sparks.splice(i,1);
-      else {
-        ctx.fillStyle = 'rgba(255,255,255,' + (s.life/900) + ')';
-        ctx.fillRect(s.x, s.y, 3,3);
-      }
-    }
-
-    // subtle HUD
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    ctx.fillRect(14, 14, 170, 44);
-    ctx.fillStyle = 'white';
-    ctx.font = '14px sans-serif';
-    ctx.fillText('Score: ' + score, 24, 36);
+  // particles
+  for (var m = 0; m < PARTS.length; m++) {
+    var p2 = PARTS[m];
+    ctx.fillStyle   = p2.color;
+    ctx.globalAlpha = Math.max(0, p2.life);
+    ctx.fillRect(Math.round(p2.x), Math.round(p2.y), p2.sz, p2.sz);
   }
+  ctx.globalAlpha = 1;
 
-  // end game
-  function endGame(){
-  running = false;
+  // llama sprite
+  var spr;
+  if (hurtTimer > 0 && Math.floor(hurtTimer * 8) % 2 === 0) {
+    spr = SPR_HURT;
+  } else if (!onGround) {
+    spr = SPR_JUMP;
+  } else {
+    spr = legFrame === 0 ? SPR_RUN_A : SPR_RUN_B;
+  }
+  drawSprite(spr, LLAMA_X, Math.round(llamaY), SCALE);
 
-  const bestPrev = Number(localStorage.getItem('llama_best')||0);
-  if (score > bestPrev) localStorage.setItem('llama_best', score);
+  drawHUD();
 
-  // Build modal into the existing #overlay
-  overlay.innerHTML = `
-    <div style="
-      background: rgba(2,6,12,.85);
-      border:1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(6px);
-      color:#fff; padding:18px 16px; border-radius:12px;
-      display:flex;flex-direction:column; gap:10px; align-items:center;
-      pointer-events:auto; box-shadow:0 12px 40px rgba(0,0,0,.45);
-    ">
-      <div style="font-size:1rem;opacity:.9">Game Over</div>
-      <div style="font-weight:800;font-size:1.2rem">Score: ${score}</div>
-      <div style="font-size:.9rem;color:#cfe3ff">Best: ${localStorage.getItem('llama_best')}</div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <button id="overlayRestart" style="
-          padding:8px 12px;border-radius:10px;border:0;
-          background:linear-gradient(180deg,var(--accent),#ffaf4a);
-          color:#081224;font-weight:800;cursor:pointer">Restart</button>
-        <button id="overlayClose" style="
-          padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
-          background:transparent;color:var(--muted);font-weight:700;cursor:pointer">Close</button>
-      </div>
-      <div style="font-size:.8rem;color:var(--muted);margin-top:4px">Tip: Hover near the llama to make her sprint away 🦙💨</div>
-    </div>
-  `;
+  if (state === 'title') drawTitleScreen();
+  else if (state === 'dead') drawDeadScreen();
+  else if (state === 'paused') drawPauseScreen();
 
-// wire modal buttons
-  document.getElementById('overlayRestart').onclick = () => { overlay.innerHTML = ''; restart(); };
-  document.getElementById('overlayClose').onclick = () => { overlay.innerHTML = ''; };
+  requestAnimationFrame(loop);
 }
 
-  // start / reset / pause
-  function startGame(){
-    if (!running) {
-      running = true; paused = false;
-      if (score === 0 && lives === 3) { /* first start */ }
-      lastTs = performance.now();
-      requestAnimationFrame(tick);
-      overlay.innerHTML = '';
-      document.getElementById('start').textContent = 'Restart';
-    } else {
-      // restart quickly
-      running = false;
-      setTimeout(()=> { score = 0; lives = 3; updateUI(); resetCircuit(); llama.x = 120; llama.y = canvas.clientHeight/2; running=true; lastTs = performance.now(); requestAnimationFrame(tick); }, 80);
-    }
-  }
-  function restart(){
-    running = false;
-    setTimeout(()=> { score = 0; lives = 3; updateUI(); resetCircuit(); llama.x = 120; llama.y = canvas.clientHeight/2; running=true; lastTs = performance.now(); requestAnimationFrame(tick); }, 80);
-  }
-  function togglePause(){
-    if (!running) return;
-    paused = !paused;
-    document.getElementById('pause').textContent = paused ? 'Resume' : 'Pause';
-    if (!paused) { lastTs = performance.now(); requestAnimationFrame(tick); }
-    if (paused) showOverlay('Paused');
-    else overlay.innerHTML = '';
-  }
-  document.getElementById('start').addEventListener('click', startGame);
-  document.getElementById('pause').addEventListener('click', togglePause);
-  document.getElementById('reset').addEventListener('click', restart);
-  document.getElementById('reset').addEventListener('dblclick', ()=>{ score = 0; lives = 3; updateUI(); });
-
-  // main loop
-  let dtCache = 16;
-  function tick(ts){
-    const dt = Math.min(40, ts - lastTs);
-    dtCache = dt;
-    lastTs = ts;
-    perf += dt;
-    update(dt);
-    draw();
-    if (running && !paused) requestAnimationFrame(tick);
-  }
-
-  // initial UI
-  updateUI();
-  showOverlay('Press Start to play');
-
-  // expose for debugging
-  window.llamaQuantum = { startGame, restart, togglePause };
-
-})();
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
